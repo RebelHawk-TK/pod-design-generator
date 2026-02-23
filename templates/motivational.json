@@ -1,0 +1,23 @@
+{
+  "category": "motivational",
+  "description": "Motivational and inspirational quote designs",
+  "style": {
+    "font": "anton",
+    "colors": "white-on-black",
+    "layout": "stacked",
+    "shadow": true
+  },
+  "phrases": [
+    "HUSTLE\nHARDER",
+    "DREAM BIG\nWORK HARD",
+    "NEVER\nGIVE UP",
+    "STAY\nHUNGRY",
+    "BE THE\nCHANGE",
+    "GRIND\nDON'T STOP",
+    "BELIEVE IN\nYOURSELF",
+    "MAKE IT\nHAPPEN",
+    "NO EXCUSES",
+    "RISE AND\nGRIND"
+  ],
+  "tags": ["motivational", "inspirational", "hustle", "grind", "believe", "success"]
+}

@@ -1,0 +1,23 @@
+{
+  "category": "hobby",
+  "description": "Hobby and interest-themed designs",
+  "style": {
+    "font": "pacifico",
+    "colors": "pink-on-dark",
+    "layout": "centered",
+    "shadow": true
+  },
+  "phrases": [
+    "Plant Mom",
+    "Dog Mom",
+    "Cat Dad",
+    "Bookworm",
+    "Gamer Life",
+    "Born to Fish",
+    "Hike More\nWorry Less",
+    "Guitar Hero",
+    "Coffee Addict",
+    "Adventure\nAwaits"
+  ],
+  "tags": ["hobby", "lifestyle", "passion", "interests", "fun"]
+}

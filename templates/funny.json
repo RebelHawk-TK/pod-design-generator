@@ -1,0 +1,23 @@
+{
+  "category": "funny",
+  "description": "Humorous and witty quote designs",
+  "style": {
+    "font": "patrickhand",
+    "colors": "neon-on-dark",
+    "layout": "stacked",
+    "shadow": true
+  },
+  "phrases": [
+    "I'm not lazy\nI'm on energy\nsaving mode",
+    "I need a\nsix-month vacation\ntwice a year",
+    "Sarcasm is my\nsuperpower",
+    "I'm not arguing\nI'm explaining\nwhy I'm right",
+    "Running late\nis my cardio",
+    "Adulting is\noverrated",
+    "I followed my heart\nand it led me\nto the fridge",
+    "WiFi, food, sleep\nthat's all I need",
+    "Professional\noverthinker",
+    "Powered by\ncaffeine and\nsarcasm"
+  ],
+  "tags": ["funny", "humor", "sarcasm", "witty", "joke", "comedy"]
+}

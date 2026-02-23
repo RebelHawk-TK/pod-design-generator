@@ -1,0 +1,23 @@
+{
+  "category": "profession",
+  "description": "Professional and career-themed designs",
+  "style": {
+    "font": "bebas",
+    "colors": "gold-on-black",
+    "layout": "stacked",
+    "shadow": true
+  },
+  "phrases": [
+    "TRUST ME\nI'M AN\nENGINEER",
+    "CODE.\nSLEEP.\nREPEAT.",
+    "WORLD'S\nOKAYEST\nDEVELOPER",
+    "EAT\nSLEEP\nCODE",
+    "KEEP CALM\nAND CODE ON",
+    "BORN TO\nCODE",
+    "DEBUGGING:\nBEING THE DETECTIVE\nIN A CRIME MOVIE\nWHERE YOU'RE\nALSO THE MURDERER",
+    "IT WORKS ON\nMY MACHINE",
+    "NURSE LIFE",
+    "TEACHER MODE\nON"
+  ],
+  "tags": ["profession", "career", "work", "job", "developer", "engineer"]
+}

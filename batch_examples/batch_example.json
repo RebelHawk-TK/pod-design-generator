@@ -1,0 +1,55 @@
+{
+  "designs": [
+    {
+      "type": "text",
+      "text": "HUSTLE\nHARDER",
+      "font": "anton",
+      "colors": "white-on-black",
+      "layout": "stacked",
+      "products": ["tshirt", "sticker"],
+      "filename": "hustle_harder",
+      "tags": ["hustle", "motivation"]
+    },
+    {
+      "type": "text",
+      "text": "Stay Wild",
+      "font": "pacifico",
+      "colors": "gold-on-black",
+      "layout": "centered",
+      "products": ["tshirt"],
+      "filename": "stay_wild",
+      "tags": ["wild", "adventure"]
+    },
+    {
+      "type": "pattern",
+      "text": "Neon Geometric",
+      "style": "geometric",
+      "palette": "neon",
+      "seed": 42,
+      "products": ["poster"],
+      "filename": "neon_geo_42"
+    },
+    {
+      "type": "pattern",
+      "text": "Cool Tessellation",
+      "style": "tessellation",
+      "palette": "cool",
+      "seed": 99,
+      "products": ["sticker"],
+      "filename": "cool_tess_99"
+    },
+    {
+      "type": "niche",
+      "theme": "funny",
+      "text": "I followed my heart\nand it led me\nto the fridge",
+      "products": ["tshirt", "sticker"],
+      "filename": "fridge_heart"
+    },
+    {
+      "type": "niche",
+      "theme": "motivational",
+      "products": ["tshirt", "poster"],
+      "filename": "motivational_random"
+    }
+  ]
+}
