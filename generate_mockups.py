@@ -367,22 +367,35 @@ def process_designs(
         return
 
     generated = 0
+    skipped = 0
     for i, (png, meta) in enumerate(designs, 1):
         title = meta["title"]
         out_path = mockup_subdir / f"{png.stem}_mockup.png"
 
-        if folder in ("tshirt", "sticker"):
-            mockup = generate_tshirt_mockup(png, title, shirt_color)
-        else:
-            mockup = generate_poster_mockup(png, title)
+        if out_path.exists():
+            generated += 1
+            if i % 50 == 0 or i == len(designs):
+                print(f"  [{i}/{len(designs)}] generated")
+            continue
 
-        mockup.save(str(out_path), "PNG", optimize=True)
-        generated += 1
+        try:
+            if folder in ("tshirt", "sticker"):
+                mockup = generate_tshirt_mockup(png, title, shirt_color)
+            else:
+                mockup = generate_poster_mockup(png, title)
+
+            mockup.save(str(out_path), "PNG", optimize=True)
+            generated += 1
+        except Exception as exc:
+            skipped += 1
+            print(f"  SKIP {png.name}: {exc}")
 
         if i % 50 == 0 or i == len(designs):
             print(f"  [{i}/{len(designs)}] generated")
 
     print(f"\nDone! {generated} mockups saved to {mockup_subdir}/")
+    if skipped:
+        print(f"  ({skipped} skipped due to errors)")
 
 
 # ---------------------------------------------------------------------------
