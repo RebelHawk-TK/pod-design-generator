@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Design Concept - T-Shirts, Posters & More</title>
+    <meta name="description" content="Unique designs on t-shirts, hoodies, stickers, posters & more. Shop our collection on Redbubble, TeePublic, and Society6.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #0a0a0a;
+            color: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: white;
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #f0f0f0, #a0a0a0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            color: #888;
+            font-size: 0.95rem;
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .link-btn:active {
+            transform: translateY(0);
+        }
+
+        .redbubble {
+            background: linear-gradient(135deg, #e8342e, #d42b25);
+            color: white;
+        }
+        .redbubble:hover { background: linear-gradient(135deg, #f04038, #e8342e); }
+
+        .teepublic {
+            background: linear-gradient(135deg, #2d3748, #1a202c);
+            color: white;
+            border: 1px solid #4a5568;
+        }
+        .teepublic:hover { background: linear-gradient(135deg, #3d4758, #2a303c); }
+
+        .society6 {
+            background: linear-gradient(135deg, #111, #222);
+            color: white;
+            border: 1px solid #444;
+        }
+        .society6:hover { background: linear-gradient(135deg, #222, #333); }
+
+        .pinterest {
+            background: linear-gradient(135deg, #e60023, #c7001e);
+            color: white;
+        }
+        .pinterest:hover { background: linear-gradient(135deg, #ff1a3d, #e60023); }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 24px 0;
+            color: #555;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #333;
+        }
+
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 32px;
+        }
+
+        .cat-tag {
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #999;
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .cat-tag:hover {
+            border-color: #666;
+            color: #ddd;
+        }
+
+        footer {
+            margin-top: 48px;
+            color: #444;
+            font-size: 0.75rem;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">MDC</div>
+        <h1>Modern Design Concept</h1>
+        <p class="tagline">Unique designs on t-shirts, hoodies, stickers, posters & more.<br>Art that speaks louder than words.</p>
+
+        <div class="links">
+            <a href="https://www.redbubble.com/people/ModernDesignCo/shop" class="link-btn redbubble" target="_blank" rel="noopener">
+                Shop on Redbubble
+            </a>
+
+            <a href="https://www.teepublic.com/user/moderndesignconcept" class="link-btn teepublic" target="_blank" rel="noopener">
+                Shop on TeePublic
+            </a>
+
+            <a href="#" class="link-btn society6" target="_blank" rel="noopener">
+                Shop on Society6 (Coming Soon)
+            </a>
+
+            <div class="divider">Follow</div>
+
+            <a href="https://www.pinterest.com/moderndesignconcept/" class="link-btn pinterest" target="_blank" rel="noopener">
+                Follow on Pinterest
+            </a>
+        </div>
+
+        <div class="categories">
+            <span class="cat-tag">Coffee</span>
+            <span class="cat-tag">Dad Jokes</span>
+            <span class="cat-tag">Fitness</span>
+            <span class="cat-tag">Gaming</span>
+            <span class="cat-tag">Mom Life</span>
+            <span class="cat-tag">Sarcasm</span>
+            <span class="cat-tag">Pets</span>
+            <span class="cat-tag">Motivation</span>
+            <span class="cat-tag">Introvert</span>
+            <span class="cat-tag">Hustle</span>
+        </div>
+
+        <footer>&copy; 2026 Modern Design Concept</footer>
+    </div>
+</body>
+</html>
