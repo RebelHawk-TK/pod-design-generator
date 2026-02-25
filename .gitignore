@@ -10,3 +10,8 @@ uploaded_teepublic.json
 .society6_session/
 uploaded_society6.json
 .imessage_bot_config
+.pinterest_session/
+.pinterest_config.json
+.pinterest_boards.json
+uploaded_pinterest.json
+app_icon.png
