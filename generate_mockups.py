@@ -370,7 +370,8 @@ def process_designs(
     skipped = 0
     for i, (png, meta) in enumerate(designs, 1):
         title = meta["title"]
-        out_path = mockup_subdir / f"{png.stem}_mockup.png"
+        color_suffix = f"_{shirt_color}" if folder in ("tshirt", "sticker") and shirt_color != DEFAULT_SHIRT_COLOR else ""
+        out_path = mockup_subdir / f"{png.stem}_mockup{color_suffix}.png"
 
         if out_path.exists():
             generated += 1
