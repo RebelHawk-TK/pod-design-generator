@@ -52,14 +52,15 @@ def resolve_colors(
 ) -> tuple[str, str | None]:
     """
     Resolve CLI color arguments into (foreground_hex, background_hex_or_None).
-    Returns None for background when transparent.
+    When transparent_bg=True, returns None for background unless an explicit
+    transparent-incompatible shortcut is used.
     """
     if color_arg:
         key = color_arg.lower().replace(" ", "-")
         if key in COLOR_SHORTCUTS:
             fg, bg = COLOR_SHORTCUTS[key]
-            if transparent_bg:
-                bg = None
+            if transparent_bg and bg is not None:
+                return fg, None
             return fg, bg
         # Try as raw hex
         if color_arg.startswith("#"):

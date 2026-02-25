@@ -3,3 +3,9 @@ fonts/*.ttf
 __pycache__/
 *.pyc
 .DS_Store
+.redbubble_session/
+uploaded.json
+.teepublic_session/
+uploaded_teepublic.json
+.society6_session/
+uploaded_society6.json
