@@ -6,24 +6,28 @@ GOOGLE_CATEGORIES = {
         "name": "Home & Garden > Decor > Wall Art",
         "product_type": "Wall Art > Posters",
         "shipping_weight": "0.5 lb",
+        "shipping_price": "4.99 USD",
     },
     "tshirt": {
         "id": 212,
         "name": "Apparel & Accessories > Clothing > Shirts & Tops > T-Shirts",
         "product_type": "Clothing > T-Shirts",
         "shipping_weight": "0.3 lb",
+        "shipping_price": "4.99 USD",
     },
     "t-shirt": {
         "id": 212,
         "name": "Apparel & Accessories > Clothing > Shirts & Tops > T-Shirts",
         "product_type": "Clothing > T-Shirts",
         "shipping_weight": "0.3 lb",
+        "shipping_price": "4.99 USD",
     },
     "sticker": {
         "id": 500044,
         "name": "Arts & Entertainment > Party & Celebration > Party Supplies > Stickers",
         "product_type": "Stickers > Die-Cut Stickers",
         "shipping_weight": "0.1 lb",
+        "shipping_price": "3.49 USD",
     },
 }
 
@@ -33,6 +37,7 @@ DEFAULT_CATEGORY = {
     "name": "Home & Garden > Decor > Wall Art",
     "product_type": "Wall Art",
     "shipping_weight": "0.5 lb",
+    "shipping_price": "4.99 USD",
 }
 
 

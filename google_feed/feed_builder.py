@@ -134,6 +134,15 @@ def build_feed(products: list[dict], output_path: str) -> dict:
 
             _g_elem(item, "shipping_weight", category["shipping_weight"])
 
+            # Shipping details
+            shipping = SubElement(item, f"{{{G_NS}}}shipping")
+            SubElement(shipping, f"{{{G_NS}}}country").text = "US"
+            SubElement(shipping, f"{{{G_NS}}}service").text = "Standard"
+            SubElement(shipping, f"{{{G_NS}}}price").text = category["shipping_price"]
+
+            # Return policy (must match label configured in Merchant Center)
+            _g_elem(item, "return_policy_label", "30_day_returns")
+
             # Color and size from variant title
             color = _parse_color(variant_title)
             if color:
