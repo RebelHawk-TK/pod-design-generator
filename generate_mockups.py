@@ -323,6 +323,7 @@ def process_designs(
     limit: int | None,
     dry_run: bool,
     shirt_color: str,
+    force: bool = False,
 ) -> None:
     """Process all designs in a folder and generate mockups."""
     folder_path = OUTPUT_DIR / folder
@@ -373,10 +374,10 @@ def process_designs(
         color_suffix = f"_{shirt_color}" if folder in ("tshirt", "sticker") and shirt_color != DEFAULT_SHIRT_COLOR else ""
         out_path = mockup_subdir / f"{png.stem}_mockup{color_suffix}.png"
 
-        if out_path.exists():
+        if out_path.exists() and not force:
             generated += 1
             if i % 50 == 0 or i == len(designs):
-                print(f"  [{i}/{len(designs)}] generated")
+                print(f"  [{i}/{len(designs)}] skipped (exists)")
             continue
 
         try:
@@ -418,6 +419,7 @@ Examples:
     parser.add_argument("--folder", required=True, help="Design folder (tshirt, sticker, poster)")
     parser.add_argument("--limit", type=int, help="Max mockups to generate")
     parser.add_argument("--dry-run", action="store_true", help="Preview without generating")
+    parser.add_argument("--force", action="store_true", help="Overwrite existing mockups (e.g. after title changes)")
     parser.add_argument(
         "--shirt-color",
         choices=list(SHIRT_COLORS.keys()),
@@ -426,7 +428,7 @@ Examples:
     )
     args = parser.parse_args()
 
-    process_designs(args.folder, args.limit, args.dry_run, args.shirt_color)
+    process_designs(args.folder, args.limit, args.dry_run, args.shirt_color, args.force)
 
 
 if __name__ == "__main__":

@@ -19,9 +19,10 @@ from __future__ import annotations
 import argparse
 import sys
 import time
+from pathlib import Path
 
 from video_gen_travel.compositor import compose_travel_video
-from video_gen_travel.config import LANDMARKS, OUTPUT_DIR, STYLE_SET_A, STYLE_SET_B
+from video_gen_travel.config import LANDMARKS, OUTPUT_DIR, POSTER_SOURCE_DIR, STOCK_OUTPUT_DIR, STYLE_SET_A, STYLE_SET_B
 from video_gen_travel.scripts import TRAVEL_SCRIPTS
 
 
@@ -56,6 +57,8 @@ def main() -> None:
         "--variant", choices=["a", "b"],
         help="Generate only one variant (default: both a and b)",
     )
+    parser.add_argument("--source-dir", type=str, help="Override poster source directory")
+    parser.add_argument("--stock", action="store_true", help="Generate stock-footage variants instead of art-style")
     parser.add_argument("--force", action="store_true", help="Overwrite existing videos")
     parser.add_argument("--dry-run", action="store_true", help="Preview without generating")
 
@@ -89,11 +92,38 @@ def main() -> None:
         print("No matching landmark/variant combinations found.")
         sys.exit(1)
 
-    print(f"\nTravel Video Generator")
-    print(f"======================")
+    # Determine mode
+    is_stock = args.stock
+    if is_stock:
+        from video_gen_travel.stock_compositor import compose_stock_travel_video
+        out_dir = STOCK_OUTPUT_DIR
+        mode_label = "Stock Footage"
+        file_pattern = "{lid}_stock_{v}.mp4"
+    else:
+        out_dir = OUTPUT_DIR
+        mode_label = "Art-Style"
+        file_pattern = "{lid}_travel_{v}.mp4"
+
+    # Source dir override
+    source_dir = Path(args.source_dir) / "poster" if args.source_dir else None
+
+    # Filter to landmarks with images in source dir
+    if source_dir:
+        check_style = STYLE_SET_A[0]
+        available_lids = {lid for lid in LANDMARKS
+                         if (source_dir / f"{lid}_{check_style}_poster.png").exists()}
+        before = len(jobs)
+        jobs = [(lid, v) for lid, v in jobs if lid in available_lids]
+        skipped = before - len(jobs)
+        if skipped:
+            print(f"Filtered to {len(jobs)} jobs with images in source dir ({skipped} skipped)")
+
+    print(f"\nTravel Video Generator ({mode_label})")
+    print(f"={'=' * (26 + len(mode_label))}")
     print(f"Videos:    {len(jobs)}")
     print(f"Variants:  {', '.join(variants)}")
-    print(f"Output:    {OUTPUT_DIR}")
+    print(f"Source:    {source_dir or POSTER_SOURCE_DIR}")
+    print(f"Output:    {out_dir}")
     print(f"Force:     {args.force}")
     print()
 
@@ -101,15 +131,14 @@ def main() -> None:
         print("DRY RUN — would generate:")
         for lid, v in jobs:
             lm = LANDMARKS[lid]
-            filename = f"{lid}_travel_{v}.mp4"
-            exists = (OUTPUT_DIR / filename).exists()
+            filename = file_pattern.format(lid=lid, v=v)
+            exists = (out_dir / filename).exists()
             if exists and args.force:
                 status = "OVERWRITE"
             elif exists:
                 status = "SKIP (exists)"
             else:
                 status = "NEW"
-            styles = STYLE_SET_A if v == "a" else STYLE_SET_B
             print(f"  {filename:<45} {lm['display_name']:<25} [{status}]")
         return
 
@@ -122,7 +151,10 @@ def main() -> None:
         lm = LANDMARKS[lid]
         print(f"[{i}/{len(jobs)}] {lm['display_name']} variant {v} ({lid})")
         try:
-            compose_travel_video(lid, v, force=args.force)
+            if is_stock:
+                compose_stock_travel_video(lid, v, force=args.force, source_dir=source_dir)
+            else:
+                compose_travel_video(lid, v, force=args.force, source_dir=source_dir)
             success += 1
         except Exception as e:
             print(f"  ERROR: {e}")

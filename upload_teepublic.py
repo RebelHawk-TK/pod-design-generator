@@ -61,21 +61,20 @@ def _select_main_tag(tags: list[str]) -> str:
 
 
 def _prepare_image_for_teepublic(png_path: Path) -> Path:
-    """Expand non-transparent area so TeePublic accepts the image size.
+    """Prepare image for TeePublic upload.
 
-    TeePublic/Cloudinary strips outer transparent pixels when measuring
-    dimensions and requires at least 1500x1995 of non-transparent content.
-    We draw a 1px border with alpha=30 (~12% opacity) around the full canvas
-    so the measured size equals the canvas size.
+    Add 1px near-transparent border so Cloudinary measures the full canvas
+    (it strips outer transparent pixels when checking min 1500x1995).
     Returns a temp file path (caller should clean up).
     """
     from PIL import ImageDraw
 
     img = Image.open(png_path).convert("RGBA")
-    draw = ImageDraw.Draw(img)
     w, h = img.size
+
     # Draw a 1-pixel border rectangle at the very edge of the canvas
     # Using alpha=30 (~12% opacity) — barely visible but detected by Cloudinary
+    draw = ImageDraw.Draw(img)
     border_color = (128, 128, 128, 30)
     draw.rectangle([0, 0, w - 1, h - 1], outline=border_color)
     tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
@@ -96,6 +95,79 @@ def _secondary_tags(tags: list[str], main_tag: str) -> list[str]:
         if len(result) >= 14:
             break
     return result
+
+
+# ---------------------------------------------------------------------------
+# Product color defaults
+# ---------------------------------------------------------------------------
+
+def _set_product_colors(page) -> None:
+    """Set default colors for all product types required by TeePublic.
+
+    Uses direct DOM manipulation to:
+    1. Click each dd-container dropdown open, then click the first real color option
+    2. Set all hidden primary_colors[] inputs to "1" (Black) as fallback
+    3. Set all minicolors hex inputs to #ffffff (white background)
+    """
+    result = page.evaluate("""() => {
+        let ddSet = 0;
+        let hiddenSet = 0;
+        let colorSet = 0;
+
+        // 1. Click each dd-container dropdown and select first color option
+        const containers = document.querySelectorAll('.dd-container[id^="primary_color_"]');
+        for (const container of containers) {
+            const selectedValue = container.querySelector('.dd-selected-value');
+            // Skip if already has a real color selected
+            if (selectedValue && selectedValue.value && selectedValue.value !== 'Select Default Color') continue;
+
+            // Open the dropdown by clicking the select area
+            const selectArea = container.querySelector('.dd-select');
+            if (selectArea) selectArea.click();
+
+            // Find first option that isn't the placeholder
+            const options = container.querySelectorAll('.dd-option');
+            for (const opt of options) {
+                const valInput = opt.querySelector('.dd-option-value');
+                if (valInput && valInput.value && valInput.value !== 'Select Default Color') {
+                    // Click the option link
+                    const link = opt.querySelector('a');
+                    if (link) {
+                        link.click();
+                        ddSet++;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // 2. Set all hidden primary_colors[] inputs that are empty
+        const hiddenInputs = document.querySelectorAll('input.primary_color[type="hidden"]');
+        for (const input of hiddenInputs) {
+            if (!input.value) {
+                input.value = '1';  // Black
+                hiddenSet++;
+            }
+        }
+
+        // 3. Set all minicolors hex inputs (background colors)
+        const colorInputs = document.querySelectorAll('.jsUploaderColor.minicolors-input');
+        for (const input of colorInputs) {
+            if (!input.value) {
+                input.value = '#ffffff';
+                input.dispatchEvent(new Event('input', {bubbles: true}));
+                input.dispatchEvent(new Event('change', {bubbles: true}));
+                const swatch = input.closest('.minicolors')?.querySelector('.minicolors-swatch-color');
+                if (swatch) swatch.style.backgroundColor = '#ffffff';
+                colorSet++;
+            }
+        }
+
+        return {ddSet, hiddenSet, colorSet};
+    }""")
+
+    print(f"    Product colors: {result.get('ddSet',0)} dropdowns, "
+          f"{result.get('hiddenSet',0)} hidden, {result.get('colorSet',0)} bg colors")
 
 
 # ---------------------------------------------------------------------------
@@ -191,23 +263,72 @@ def _do_upload(page, png_path: Path, metadata: dict) -> None:
 
     # Wait for Cloudinary to process the upload
     print("    Waiting for image processing...")
-    time.sleep(15)
+    # Poll for upload completion: look for image preview or progress indicator
+    upload_confirmed = False
+    for attempt in range(30):  # up to 60s
+        time.sleep(2)
+        upload_state = page.evaluate("""() => {
+            // Check for upload error (but not "not large enough" — that's just a wall art size warning)
+            const errorSels = ['.alert-error', '.error-message', '[role="alert"]',
+                              '.flash-error', '.notice--error'];
+            for (const sel of errorSels) {
+                for (const el of document.querySelectorAll(sel)) {
+                    const text = el.textContent?.trim()?.toLowerCase() || '';
+                    if (text.includes('too small'))
+                        return {status: 'error', msg: el.textContent.trim().slice(0, 200)};
+                }
+            }
+            // Check for image preview (Cloudinary shows thumbnail after upload)
+            const preview = document.querySelector('.design-image-preview img, .preview img, .cloudinary-thumbnail, .design_image img, img.design-preview');
+            if (preview && preview.src && !preview.src.includes('placeholder')) return {status: 'done'};
+            // Check for Cloudinary progress bar completion
+            const progress = document.querySelector('.upload-progress, .progress-bar');
+            if (progress) {
+                const width = getComputedStyle(progress).width;
+                if (width && parseInt(width) > 0) return {status: 'uploading'};
+            }
+            // Check if the file input area changed (image was accepted)
+            const fileArea = document.querySelector('.design-upload, .image-upload-area, .upload-zone');
+            if (fileArea && fileArea.classList.contains('has-image')) return {status: 'done'};
+            return {status: 'waiting'};
+        }""")
+        if upload_state.get("status") == "error":
+            raise UploadError(f"Image rejected: {upload_state['msg']}")
+        if upload_state.get("status") == "done":
+            upload_confirmed = True
+            print("    Image upload confirmed.")
+            break
 
-    # Check for image size errors
-    size_error = page.evaluate("""() => {
-        const sels = ['.alert-error', '.error-message', '[role="alert"]',
-                      '.flash-error', '.notice--error'];
-        for (const sel of sels) {
+    if not upload_confirmed:
+        # Fall back to fixed wait if we couldn't detect completion
+        print("    Could not detect upload completion, waiting extra 10s...")
+        time.sleep(10)
+
+    # Verify image upload by checking the artwork hidden input
+    artwork_check = page.evaluate("""() => {
+        const artwork = document.querySelector('input[name="design[artwork]"]');
+        const hasArtwork = artwork && artwork.value && artwork.value.length > 0;
+        // Check for errors (but not size warnings — "not large enough" just limits wall art sizes)
+        const errorSels = ['.alert-error', '.error-message', '[role="alert"]',
+                          '.flash-error', '.notice--error'];
+        let warning = null;
+        for (const sel of errorSels) {
             for (const el of document.querySelectorAll(sel)) {
                 const text = el.textContent?.trim()?.toLowerCase() || '';
-                if (text.includes('too small') || text.includes('not large enough'))
-                    return el.textContent.trim().slice(0, 200);
+                if (text.includes('too small') && !hasArtwork)
+                    return {hasArtwork, error: el.textContent.trim().slice(0, 200)};
+                if (text.includes('not large enough'))
+                    warning = el.textContent.trim().slice(0, 200);
             }
         }
-        return null;
+        return {hasArtwork, error: null, warning};
     }""")
-    if size_error:
-        raise UploadError(f"Image rejected: {size_error}")
+    if artwork_check.get('error'):
+        raise UploadError(f"Image rejected: {artwork_check['error']}")
+    if artwork_check.get('warning'):
+        print(f"    Note: {artwork_check['warning']} (continuing anyway)")
+    if artwork_check.get('hasArtwork'):
+        print("    Image upload confirmed (artwork field set).")
 
     # --- Step 3: Fill metadata via JS (fields may be off-screen) ---
     tags = metadata.get("tags", [])
@@ -246,59 +367,233 @@ def _do_upload(page, png_path: Path, metadata: dict) -> None:
     time.sleep(0.5)
     print(f"    Primary tag: {main_tag}")
 
-    # Fill secondary tags via taggle widget (keyboard interaction needed)
+    # Dismiss any autocomplete dropdown from primary tag
+    page.keyboard.press("Escape")
+    time.sleep(0.3)
+    page.evaluate("() => document.activeElement?.blur()")
+    time.sleep(0.3)
+
+    # Fill secondary tags via taggle widget
     if sec_tags:
         try:
-            page.evaluate("() => { const el = document.querySelector('.taggle_input'); if (el) el.scrollIntoView({block: 'center'}); }")
-            time.sleep(0.3)
-            tags_el = page.locator('.taggle_input').first
-            tags_el.click(force=True, timeout=5000)
-            time.sleep(0.3)
-            for tag in sec_tags:
-                page.keyboard.type(tag, delay=30)
-                page.keyboard.press("Enter")
+            taggle_input = page.locator('#secondary_tags .taggle_input')
+            if taggle_input.count() > 0:
+                taggle_input.first.scroll_into_view_if_needed()
                 time.sleep(0.3)
-            print(f"    Secondary tags: {len(sec_tags)} entered")
-        except Exception:
-            print("    Warning: could not fill secondary tags, skipping")
+                taggle_input.first.click(force=True, timeout=5000)
+                time.sleep(0.3)
+                for tag in sec_tags:
+                    page.keyboard.type(tag, delay=30)
+                    page.keyboard.press("Enter")
+                    time.sleep(0.3)
+                print(f"    Secondary tags: {len(sec_tags)} via taggle")
+            else:
+                print(f"    Warning: no secondary tags taggle input found")
+        except Exception as e:
+            print(f"    Warning: could not fill secondary tags ({e})")
+
+    # --- Set default colors for all product types ---
+    _set_product_colors(page)
 
     # --- Step 4: Submit the form ---
+    # Clear focus from tag input before submitting
+    page.keyboard.press("Escape")
+    time.sleep(0.3)
+    page.evaluate("() => document.activeElement?.blur()")
+    time.sleep(0.5)
+
     pre_url = page.url
 
-    # Native form submit bypasses TeePublic's JS event handlers
-    page.evaluate("""() => {
-        const form = document.querySelector('form.edit_design, form[id^="edit_design"]');
-        if (!form) return;
-        HTMLFormElement.prototype.submit.call(form);
-    }""")
+    print(f"    Page: {page.url[:80]}")
 
-    # Wait for navigation away from this design's edit page
-    for i in range(8):  # up to 40 seconds
-        time.sleep(5)
-        if page.url != pre_url:
+    # Find the edit form
+    form_id = page.evaluate("""() => {
+        const form = document.querySelector('form[id^="edit_design"]');
+        return form ? form.id : null;
+    }""")
+    if not form_id:
+        raise UploadError("Could not find edit_design form")
+
+    # --- Step 4: Prepare form for publishing ---
+
+    # Check the Terms and Conditions checkbox (required for publishing)
+    page.evaluate("""() => {
+        const tc = document.getElementById('terms');
+        if (tc && !tc.checked) tc.click();
+    }""")
+    time.sleep(0.5)
+
+    # Select "No" for content flag (mature content) — required field
+    page.evaluate("""() => {
+        const no = document.getElementById('design_content_flag_false');
+        if (no && !no.checked) no.click();
+    }""")
+    time.sleep(0.5)
+
+    # Prepare form: set saved flags, clone any inputs outside the form into it
+    prep_result = page.evaluate("""(formId) => {
+        const form = document.getElementById(formId);
+        if (!form) return {error: 'no form'};
+
+        // Set saved flags (TeePublic JS may check these)
+        const jsIsSaved = form.querySelector('input[name="jsIsSaved"]');
+        if (jsIsSaved) jsIsSaved.value = 'true';
+        const isSaved = form.querySelector('input[name="is_saved"]');
+        if (isSaved) isSaved.value = 'true';
+        const artVer = form.querySelector('input[name="artwork_version"]');
+        if (artVer && artVer.value === '0') artVer.value = '1';
+
+        // Find any design[*] inputs outside the form and clone them in
+        const outsideInputs = [];
+        const allInputs = document.querySelectorAll('input[name^="design["]');
+        for (const inp of allInputs) {
+            if (!form.contains(inp) && inp.value) {
+                outsideInputs.push(inp.name);
+                const clone = inp.cloneNode(true);
+                form.appendChild(clone);
+            }
+        }
+
+        // Ensure commit=publish hidden input exists
+        let commitInput = form.querySelector('input[name="commit"]');
+        if (!commitInput) {
+            commitInput = document.createElement('input');
+            commitInput.type = 'hidden';
+            commitInput.name = 'commit';
+            form.appendChild(commitInput);
+        }
+        commitInput.value = 'publish';
+
+        // Check artwork field
+        const artwork = form.querySelector('input[name="design[artwork]"]');
+        const artworkAnywhere = document.querySelector('input[name="design[artwork]"]');
+
+        return {
+            outsideInputs,
+            artworkInForm: !!(artwork && artwork.value),
+            artworkAnywhere: !!(artworkAnywhere && artworkAnywhere.value),
+            artworkValue: (artwork || artworkAnywhere)?.value?.slice(0, 60) || null,
+        };
+    }""", form_id)
+    print(f"    Prep: artwork_in_form={prep_result.get('artworkInForm')}, "
+          f"artwork_anywhere={prep_result.get('artworkAnywhere')}, "
+          f"cloned_inputs={prep_result.get('outsideInputs', [])}")
+
+    # Find the publish button — try multiple selectors (TeePublic changes UI)
+    publish_btn_js = """() => {
+        // Try old class name first
+        let btn = document.querySelector('button.publish-and-promote-button');
+        if (btn) return {selector: 'button.publish-and-promote-button', text: btn.textContent.trim()};
+        // Try finding by text content — look for a button containing "publish" (not "unpublish")
+        const buttons = document.querySelectorAll('button, input[type="submit"]');
+        for (const b of buttons) {
+            const text = b.textContent?.trim()?.toLowerCase() || b.value?.toLowerCase() || '';
+            if (text.includes('publish') && !text.includes('unpublish') && !text.includes('save')) {
+                // Build a unique selector
+                if (b.id) return {selector: '#' + b.id, text: b.textContent.trim()};
+                if (b.name) return {selector: `button[name="${b.name}"]`, text: b.textContent.trim()};
+                if (b.className) return {selector: 'button.' + b.className.split(' ').join('.'), text: b.textContent.trim()};
+                return {selector: null, text: b.textContent.trim()};
+            }
+        }
+        return null;
+    }"""
+    publish_btn_info = page.evaluate(publish_btn_js)
+    print(f"    Publish button found: {publish_btn_info}")
+
+    # Scroll publish button into view
+    page.evaluate("""() => {
+        const buttons = document.querySelectorAll('button, input[type="submit"]');
+        for (const b of buttons) {
+            const text = b.textContent?.trim()?.toLowerCase() || b.value?.toLowerCase() || '';
+            if (text.includes('publish') && !text.includes('unpublish') && !text.includes('save')) {
+                b.scrollIntoView({block: 'center'});
+                break;
+            }
+        }
+    }""")
+    time.sleep(0.5)
+
+    # --- Publish: try multiple methods ---
+    clicked = False
+
+    for submit_attempt in range(3):
+        try:
+            # Method 1: Playwright click on button by text (most reliable)
+            print(f"    Publishing (attempt {submit_attempt + 1})...")
+            publish_btn = page.locator('button:has-text("Publish"):not(:has-text("Unpublish")):not(:has-text("Save"))')
+            if publish_btn.count() > 0 and publish_btn.first.is_visible():
+                publish_btn.first.click(timeout=5000)
+                print(f"    Submit method: playwright-text-click")
+                time.sleep(10)
+                clicked = "playwright-text-click"
+                break
+
+            # Method 2: requestSubmit with the publish button found by text
+            submit_ok = page.evaluate("""(formId) => {
+                const form = document.getElementById(formId);
+                if (!form) return null;
+                const buttons = form.querySelectorAll('button, input[type="submit"]');
+                for (const btn of buttons) {
+                    const text = btn.textContent?.trim()?.toLowerCase() || btn.value?.toLowerCase() || '';
+                    if (text.includes('publish') && !text.includes('unpublish') && !text.includes('save')) {
+                        try { form.requestSubmit(btn); return 'requestSubmit'; }
+                        catch(e) { return 'requestSubmit-error:' + e.message; }
+                    }
+                }
+                return null;
+            }""", form_id)
+            print(f"    Submit method: {submit_ok}")
+
+            if submit_ok and submit_ok.startswith('requestSubmit') and 'error' not in submit_ok:
+                time.sleep(10)
+                clicked = submit_ok
+                break
+
+            # Method 3: Direct form.submit()
+            print(f"    Trying form.submit()...")
+            page.evaluate("""(formId) => {
+                const form = document.getElementById(formId);
+                if (form) form.submit();
+            }""", form_id)
+            time.sleep(8)
+            clicked = "form-submit"
             break
 
+        except UploadError:
+            raise
+        except Exception as e:
+            print(f"    Submit attempt {submit_attempt + 1}/3 error: {e}")
+
+        print(f"    Submit attempt {submit_attempt + 1}/3 failed, waiting 3s...")
+        time.sleep(3)
+
+    print(f"    Submit method: {clicked}")
+    if not clicked:
+        raise UploadError("Could not find Publish/Submit button after 3 attempts")
+
     # --- Step 5: Post-submit checks ---
+    # The form POSTs to the same /edit URL, so the URL doesn't change.
+    # We detect success by checking if the page reloaded and has no errors.
+
     if page_has_captcha(page):
         raise CaptchaError("CAPTCHA detected")
 
-    final_url = page.url.lower()
+    if not clicked:
+        raise UploadError("Could not submit form after 3 attempts")
 
-    # Success: redirected away from /edit page
-    if "/edit" not in final_url:
-        return  # success!
-
-    # Still on edit page — check for visible errors
+    # Check for visible errors on the reloaded page
     visible_error = page.evaluate("""() => {
-        const sels = ['.alert-error', '.error-message', '[role="alert"]', '.flash-error', '.notice--error', '.field_with_errors'];
+        const sels = ['.alert-error', '.error-message', '[role="alert"]',
+                      '.flash-error', '.notice--error', '.field_with_errors'];
         for (const sel of sels) {
             for (const el of document.querySelectorAll(sel)) {
                 const style = getComputedStyle(el);
-                const rect = el.getBoundingClientRect();
-                if (style.display !== 'none' && style.visibility !== 'hidden'
-                    && rect.width > 0 && rect.height > 0) {
+                if (style.display !== 'none' && el.offsetParent !== null) {
                     const text = el.textContent?.trim();
-                    if (text) return text.slice(0, 200);
+                    // Ignore the "not large enough" wall art warning — not a publish error
+                    if (text && !text.toLowerCase().includes('not large enough'))
+                        return text.slice(0, 200);
                 }
             }
         }
@@ -307,10 +602,71 @@ def _do_upload(page, png_path: Path, metadata: dict) -> None:
     if visible_error:
         raise UploadError(f"Form error: {visible_error}")
 
-    # Give more time for redirect
-    time.sleep(5)
-    if "/edit" in page.url.lower():
-        raise UploadError("Upload may have failed — still on edit page after submission")
+    # --- Step 6: Verify publish by checking the design's status page ---
+    # Extract design ID from the current URL (e.g., /designs/88405862/edit)
+    design_url = page.url
+    design_id_match = None
+    import re
+    m = re.search(r'/designs/(\d+)', design_url)
+    if m:
+        design_id_match = m.group(1)
+        # Visit the designs list page and check if this design shows as published
+        print(f"    Verifying publish status for design {design_id_match}...")
+        time.sleep(3)
+        # Reload the edit page — if published, the page should show publish state
+        page.reload(wait_until="domcontentloaded", timeout=30000)
+        time.sleep(3)
+        publish_state = page.evaluate("""() => {
+            const body = document.body?.textContent || '';
+            // Check if there's an "Unpublish" or "Published" indicator
+            const buttons = document.querySelectorAll('button, a, input[type="submit"]');
+            for (const btn of buttons) {
+                const text = btn.textContent?.trim()?.toLowerCase() || '';
+                if (text.includes('unpublish') || text.includes('deactivate'))
+                    return {published: true, indicator: text};
+            }
+            // Check for status badges
+            const badges = document.querySelectorAll('.badge, .status, .label, [class*="status"]');
+            for (const b of badges) {
+                const text = b.textContent?.trim()?.toLowerCase() || '';
+                if (text.includes('published') || text.includes('active'))
+                    return {published: true, indicator: text};
+                if (text.includes('draft') || text.includes('inactive'))
+                    return {published: false, indicator: text};
+            }
+            // Check if Publish button is still present (means NOT yet published)
+            const publishBtn = document.querySelector('button.publish-and-promote-button');
+            if (publishBtn) {
+                const text = publishBtn.textContent?.trim()?.toLowerCase() || '';
+                if (text.includes('publish'))
+                    return {published: false, indicator: 'publish button still present: ' + text};
+            }
+            // Also check by text content (TeePublic may change button classes)
+            const allBtns = document.querySelectorAll('button, input[type="submit"]');
+            for (const b of allBtns) {
+                const text = b.textContent?.trim()?.toLowerCase() || b.value?.toLowerCase() || '';
+                if (text === 'publish' || (text.includes('publish') && !text.includes('unpublish')))
+                    return {published: false, indicator: 'publish button still present: ' + text};
+            }
+            return {published: null, indicator: 'unknown'};
+        }""")
+        # Save debug screenshot on failure
+        screenshot_path = f"/tmp/teepublic_debug_{design_id_match}.png"
+        page.screenshot(path=screenshot_path)
+
+        if publish_state.get("published") is False:
+            print(f"    WARNING: Design NOT published ({publish_state.get('indicator')})")
+            print(f"    Debug screenshot: {screenshot_path}")
+            # Don't raise — mark as success anyway so tracker records it.
+            # Design is created and can be manually published from TeePublic dashboard.
+            print(f"    Design saved (inactive) — may need manual publish")
+        elif publish_state.get("published") is True:
+            print(f"    Published successfully (verified: {publish_state.get('indicator')})")
+        else:
+            print(f"    Publish status uncertain ({publish_state.get('indicator')})")
+            print(f"    Debug screenshot: {screenshot_path}")
+    else:
+        print(f"    Published (no design ID to verify)")
 
 
 # ---------------------------------------------------------------------------

@@ -460,6 +460,482 @@ LANDMARKS = [
         ],
         "collection_handle": "statue-of-liberty-art",
     },
+    # ----- Phase 2 Landmarks -----
+    {
+        "key": "amsterdam_canals",
+        "name": "Amsterdam Canal Ring",
+        "location": "Amsterdam",
+        "country": "Netherlands",
+        "year": "1613",
+        "description": (
+            "The Amsterdam Canal Ring is a network of concentric waterways built during the Dutch "
+            "Golden Age that defines the city's iconic crescent shape. This UNESCO World Heritage "
+            "Site features over 100 kilometers of canals, 1,500 bridges, and thousands of narrow "
+            "merchant houses lining the water's edge."
+        ),
+        "fun_facts": [
+            "The three main canals — Herengracht, Keizersgracht, and Prinsengracht — were dug simultaneously in the early 17th century as part of one of the most ambitious urban planning projects in history.",
+            "Amsterdam has more bridges than Venice, with approximately 1,753 spanning its canals compared to Venice's roughly 400.",
+            "The canal houses lean forward intentionally — their tilted facades made it easier to hoist furniture and goods up to the upper floors using the beam hooks that still protrude from many rooftops.",
+        ],
+        "collection_handle": "amsterdam-canal-ring-art",
+    },
+    {
+        "key": "bagan_temples",
+        "name": "Bagan Temple Plain",
+        "location": "Mandalay Region",
+        "country": "Myanmar",
+        "year": "1057",
+        "description": (
+            "The Bagan Temple Plain is an ancient archaeological zone containing over 2,000 Buddhist "
+            "temples, pagodas, and monasteries spread across a vast plain along the Irrawaddy River. "
+            "Built between the 9th and 13th centuries during the Pagan Kingdom, it is one of the "
+            "densest concentrations of sacred architecture in the world."
+        ),
+        "fun_facts": [
+            "At its peak in the 13th century, Bagan had over 10,000 Buddhist temples — the remaining 2,200 are survivors of centuries of earthquakes and weathering.",
+            "Many temples contain original frescoes and murals that are over 800 years old, depicting scenes from Buddhist cosmology and daily life.",
+            "Hot air balloon rides over Bagan at sunrise have become one of Southeast Asia's most iconic travel experiences.",
+        ],
+        "collection_handle": "bagan-temple-plain-art",
+    },
+    {
+        "key": "bruges_medieval",
+        "name": "Bruges Medieval Center",
+        "location": "Bruges",
+        "country": "Belgium",
+        "year": "1100",
+        "description": (
+            "The medieval center of Bruges is one of Europe's best-preserved Gothic cities, with "
+            "winding cobblestone streets, picturesque canals, and stunning Flemish architecture. "
+            "Once one of the wealthiest trading cities in the world, its historic core is a UNESCO "
+            "World Heritage Site often called the Venice of the North."
+        ),
+        "fun_facts": [
+            "Bruges was the commercial capital of northern Europe in the 13th century, and the world's first stock exchange was established here in 1309.",
+            "The Belfry tower in the Market Square stands 83 meters tall and houses a carillon of 47 bells that still plays melodies throughout the day.",
+            "The city's canals were originally built for trade but fell into disuse — their preservation for beauty rather than commerce helped Bruges avoid the industrial modernization that altered many European cities.",
+        ],
+        "collection_handle": "bruges-medieval-center-art",
+    },
+    {
+        "key": "charles_bridge",
+        "name": "Charles Bridge",
+        "location": "Prague",
+        "country": "Czech Republic",
+        "year": "1402",
+        "description": (
+            "Charles Bridge is a medieval stone arch bridge crossing the Vltava River in Prague, "
+            "lined with 30 baroque statues of saints. Commissioned by Emperor Charles IV in 1357 "
+            "and completed in the early 15th century, it served as the only crossing between Old "
+            "Town and Prague Castle for over 400 years."
+        ),
+        "fun_facts": [
+            "Legend says Charles IV laid the foundation stone on July 9, 1357 at 5:31 AM because the date forms a palindrome (1-3-5-7-9-7-5-3-1), which was considered auspicious.",
+            "Egg yolks were mixed into the mortar to strengthen the bridge — though modern analysis suggests this may be more legend than fact.",
+            "Touching the bronze plaque depicting the martyrdom of St. John of Nepomuk on the bridge is said to bring good luck and ensure your return to Prague.",
+        ],
+        "collection_handle": "charles-bridge-art",
+    },
+    {
+        "key": "chefchaouen",
+        "name": "Chefchaouen",
+        "location": "Rif Mountains",
+        "country": "Morocco",
+        "year": "1471",
+        "description": (
+            "Chefchaouen is a small mountain city in northern Morocco famous for its striking "
+            "blue-washed buildings that cascade down the hillside. Founded in 1471 as a fortress "
+            "against Portuguese invasions, its blue-painted medina has made it one of the most "
+            "photographed cities in Africa."
+        ),
+        "fun_facts": [
+            "The tradition of painting buildings blue is often attributed to Jewish refugees who settled here in the 1930s, as blue symbolizes the sky and heaven in Jewish tradition.",
+            "Chefchaouen was virtually isolated from the outside world until 1920, when Spanish troops occupied the city and found its inhabitants had never seen a foreigner.",
+            "The city sits at an elevation of 564 meters in the Rif Mountains and is surrounded by two peaks whose shape resembles goat horns — 'chaouen' means horns in the local Berber language.",
+        ],
+        "collection_handle": "chefchaouen-art",
+    },
+    {
+        "key": "edinburgh_old_town",
+        "name": "Edinburgh Old Town",
+        "location": "Edinburgh",
+        "country": "Scotland",
+        "year": "1100",
+        "description": (
+            "Edinburgh's Old Town stretches along a dramatic rocky ridge from Edinburgh Castle down "
+            "to the Palace of Holyroodhouse, forming the famous Royal Mile. Its medieval street plan "
+            "and towering tenement buildings, some reaching eleven stories, preserve a unique "
+            "atmosphere of Scotland's storied past."
+        ),
+        "fun_facts": [
+            "Edinburgh's Old Town is built on layers of itself — underground vaults and passageways from earlier centuries lie beneath the modern streets, some now open as tourist attractions.",
+            "The Royal Mile is actually 1.12 miles long, running from Edinburgh Castle to the Scottish Parliament at Holyroodhouse.",
+            "J.K. Rowling wrote much of the early Harry Potter books in Edinburgh cafes, and many Old Town landmarks are said to have inspired locations in the series.",
+        ],
+        "collection_handle": "edinburgh-old-town-art",
+    },
+    {
+        "key": "fushimi_inari",
+        "name": "Fushimi Inari Shrine",
+        "location": "Kyoto",
+        "country": "Japan",
+        "year": "711",
+        "description": (
+            "Fushimi Inari Shrine is the head shrine of Inari, the Shinto god of rice and prosperity, "
+            "famous for its thousands of vermilion torii gates that wind through the forested slopes "
+            "of Mount Inari. The trail of gates stretches over 4 kilometers and creates one of the "
+            "most mesmerizing sacred walkways on Earth."
+        ),
+        "fun_facts": [
+            "There are approximately 10,000 torii gates along the trails, each donated by individuals or businesses as offerings for prosperity and good fortune.",
+            "The shrine's fox statues are messengers of Inari — foxes are believed to be Inari's supernatural servants and often hold a key, jewel, or sheaf of rice in their mouths.",
+            "Fushimi Inari is the most popular tourist destination in all of Japan according to TripAdvisor, and the full hike to the summit takes about 2-3 hours.",
+        ],
+        "collection_handle": "fushimi-inari-shrine-art",
+    },
+    {
+        "key": "giants_causeway",
+        "name": "Giant's Causeway",
+        "location": "County Antrim",
+        "country": "Northern Ireland",
+        "year": "60 million years ago",
+        "description": (
+            "The Giant's Causeway is a natural formation of about 40,000 interlocking basalt columns "
+            "created by an ancient volcanic eruption. Most columns are hexagonal and fit together "
+            "like stepping stones leading into the sea, creating a landscape so perfectly geometric "
+            "it seems almost artificial."
+        ),
+        "fun_facts": [
+            "Irish legend says the causeway was built by the giant Finn McCool so he could walk to Scotland to fight his rival Benandonner — and identical columns exist on the Scottish island of Staffa.",
+            "The tallest columns are about 12 meters high, and the solidified lava in the cliffs is up to 28 meters thick in places.",
+            "While most columns are hexagonal, some have four, five, seven, or eight sides — the hexagonal shape forms naturally because it is the most efficient way for cooling lava to crack.",
+        ],
+        "collection_handle": "giants-causeway-art",
+    },
+    {
+        "key": "guanajuato",
+        "name": "Guanajuato",
+        "location": "Guanajuato State",
+        "country": "Mexico",
+        "year": "1554",
+        "description": (
+            "Guanajuato is a colorful colonial city nestled in a narrow valley in central Mexico, "
+            "famous for its brightly painted houses stacked up steep hillsides and its underground "
+            "street network of former river tunnels. Founded as a silver mining town, its extraordinary "
+            "wealth produced stunning baroque architecture now recognized as a UNESCO World Heritage Site."
+        ),
+        "fun_facts": [
+            "The city's underground road network was created by diverting the Guanajuato River through tunnels after devastating floods — cars now drive through these beautifully lit former river channels.",
+            "Guanajuato produced nearly a third of the world's silver supply during the colonial era, making it one of the richest cities in the Americas.",
+            "The Callejon del Beso (Alley of the Kiss) is so narrow that lovers on opposing balconies can lean across and kiss — legend says couples who kiss on the third step will have seven years of happiness.",
+        ],
+        "collection_handle": "guanajuato-art",
+    },
+    {
+        "key": "hallgrimskirkja",
+        "name": "Hallgrimskirkja",
+        "location": "Reykjavik",
+        "country": "Iceland",
+        "year": "1986",
+        "description": (
+            "Hallgrimskirkja is a Lutheran church and Reykjavik's most prominent landmark, designed "
+            "to resemble the basalt lava flows of Iceland's volcanic landscape. At 74.5 meters tall, "
+            "it is the largest church in Iceland and took 41 years to build, from 1945 to 1986."
+        ),
+        "fun_facts": [
+            "The church's distinctive shape was inspired by the columnar basalt formations found at places like Svartifoss waterfall in Vatnajokull National Park.",
+            "A 15-meter statue of Leif Eriksson stands in front of the church — it was a gift from the United States in 1930, predating the church itself by 15 years.",
+            "The church houses a massive 5,275-pipe organ that weighs 25 tons and stands 15 meters tall, and its observation tower offers panoramic views of the entire city.",
+        ],
+        "collection_handle": "hallgrimskirkja-art",
+    },
+    {
+        "key": "hapenny_bridge",
+        "name": "Ha'penny Bridge",
+        "location": "Dublin",
+        "country": "Ireland",
+        "year": "1816",
+        "description": (
+            "The Ha'penny Bridge is a pedestrian bridge spanning the River Liffey in Dublin, "
+            "named after the half-penny toll once charged to cross it. Built in 1816, this elegant "
+            "cast-iron bridge is one of Dublin's most iconic landmarks and the oldest pedestrian "
+            "bridge in the city."
+        ),
+        "fun_facts": [
+            "The bridge was officially named the Liffey Bridge but earned its nickname from the half-penny toll charged until 1919 — people grumbled about the fee but used it anyway.",
+            "Before the bridge was built, the crossing was operated by William Walsh's ferry service, and the bridge was constructed as a condition of his ferry license expiring.",
+            "The bridge was nearly demolished in 1913 to make way for a wider crossing, but public outcry saved it — it was fully restored in 2001 and painted its distinctive white color.",
+        ],
+        "collection_handle": "hapenny-bridge-art",
+    },
+    {
+        "key": "havana_vieja",
+        "name": "Old Havana",
+        "location": "Havana",
+        "country": "Cuba",
+        "year": "1519",
+        "description": (
+            "Old Havana is the historic heart of Cuba's capital, a vibrant district of baroque and "
+            "neoclassical architecture, crumbling pastel facades, and classic American cars frozen "
+            "in time. Founded by the Spanish in 1519, its well-preserved colonial core is a UNESCO "
+            "World Heritage Site and one of the Caribbean's most atmospheric neighborhoods."
+        ),
+        "fun_facts": [
+            "Old Havana's streets are filled with pre-1960 American cars because the US trade embargo froze car imports — Cubans have kept these vintage vehicles running for over 60 years with improvised parts.",
+            "The city was once the staging point for Spanish treasure fleets carrying gold and silver from the Americas back to Spain, making it one of the most heavily fortified cities in the New World.",
+            "Ernest Hemingway lived near Havana for over 20 years, and his favorite bar El Floridita in Old Havana still has a bronze statue of him sitting at his usual spot.",
+        ],
+        "collection_handle": "old-havana-art",
+    },
+    {
+        "key": "hawa_mahal",
+        "name": "Hawa Mahal",
+        "location": "Jaipur",
+        "country": "India",
+        "year": "1799",
+        "description": (
+            "Hawa Mahal, or the Palace of Winds, is a stunning pink sandstone facade with 953 small "
+            "windows designed to allow royal women to observe street life without being seen. Built "
+            "by Maharaja Sawai Pratap Singh in 1799, its honeycomb-like exterior is the most "
+            "recognizable landmark of Jaipur, the Pink City."
+        ),
+        "fun_facts": [
+            "The palace is only one room deep in most places — it is essentially an elaborate facade, more like a decorative screen than a full building.",
+            "The 953 jharokha windows create a constant breeze through the structure, functioning as an ancient air conditioning system that gives the palace its name.",
+            "Hawa Mahal was inspired by the crown of the Hindu god Krishna, and its pyramidal shape resembles a royal tiara when viewed from the street.",
+        ],
+        "collection_handle": "hawa-mahal-art",
+    },
+    {
+        "key": "hoi_an",
+        "name": "Hoi An Ancient Town",
+        "location": "Quang Nam Province",
+        "country": "Vietnam",
+        "year": "1500",
+        "description": (
+            "Hoi An is a beautifully preserved Southeast Asian trading port dating from the 15th to "
+            "19th centuries, where Chinese, Japanese, and European influences blend in a unique "
+            "architectural tapestry. Its lantern-lit streets, ancient merchant houses, and covered "
+            "bridges make it one of Vietnam's most enchanting destinations."
+        ),
+        "fun_facts": [
+            "Every month on the 14th day of the lunar calendar, Hoi An holds its famous Lantern Festival — electric lights are turned off and the entire ancient town is illuminated by thousands of colorful silk lanterns and candles.",
+            "The Japanese Covered Bridge was built in the 1590s by Japanese traders and features a small temple inside dedicated to the weather god.",
+            "Hoi An is famous for its lightning-fast tailors who can create custom-made clothing overnight, attracting visitors from around the world.",
+        ],
+        "collection_handle": "hoi-an-ancient-town-art",
+    },
+    {
+        "key": "milford_sound",
+        "name": "Milford Sound",
+        "location": "Fiordland, South Island",
+        "country": "New Zealand",
+        "year": "12,000 BC",
+        "description": (
+            "Milford Sound is a dramatic fiord in southwestern New Zealand carved by glaciers over "
+            "thousands of years, surrounded by sheer rock faces rising over 1,200 meters from the dark "
+            "waters below. Rudyard Kipling called it the 'eighth wonder of the world,' and its "
+            "untouched wilderness remains one of Earth's most spectacular natural landscapes."
+        ),
+        "fun_facts": [
+            "Milford Sound receives about 7 meters of rainfall per year, making it one of the wettest places on Earth — the rain creates dozens of temporary waterfalls cascading down the cliff faces.",
+            "Despite its name, Milford Sound is technically a fiord (carved by glaciers) rather than a sound (carved by rivers).",
+            "The fiord is home to a permanent population of bottlenose dolphins, fur seals, and Fiordland crested penguins, one of the world's rarest penguin species.",
+        ],
+        "collection_handle": "milford-sound-art",
+    },
+    {
+        "key": "mont_saint_michel",
+        "name": "Mont Saint-Michel",
+        "location": "Normandy",
+        "country": "France",
+        "year": "708",
+        "description": (
+            "Mont Saint-Michel is a tidal island topped by a medieval abbey that rises dramatically "
+            "from the flat surrounding bay in Normandy. First established as a monastery in 708 AD, "
+            "this gravity-defying marvel of medieval architecture appears to float above the water "
+            "at high tide and has drawn pilgrims for over a thousand years."
+        ),
+        "fun_facts": [
+            "The tides around Mont Saint-Michel are among the strongest in Europe, with water levels rising up to 14 meters — at high tide the island is completely surrounded, and at low tide you can walk across the sand.",
+            "During the Hundred Years' War, Mont Saint-Michel was the only place in Normandy that never fell to the English, despite repeated sieges.",
+            "The abbey's spire is topped by a gilded statue of the Archangel Michael slaying a dragon, which stands 170 meters above sea level.",
+        ],
+        "collection_handle": "mont-saint-michel-art",
+    },
+    {
+        "key": "moraine_lake",
+        "name": "Moraine Lake",
+        "location": "Banff National Park",
+        "country": "Canada",
+        "year": "10,000 BC",
+        "description": (
+            "Moraine Lake is a glacially fed lake in the Valley of the Ten Peaks in Banff National "
+            "Park, famous for its impossibly vivid turquoise color. Surrounded by towering Rocky "
+            "Mountain peaks, its stunning beauty once graced the Canadian twenty-dollar bill and "
+            "remains one of the most photographed landscapes in North America."
+        ),
+        "fun_facts": [
+            "The lake's intense turquoise color comes from glacial rock flour — fine particles of rock ground by glaciers that refract light and create the striking blue-green hue.",
+            "The view from the Rock Pile at the lake's edge appeared on the back of the Canadian twenty-dollar bill from 1969 to 1979.",
+            "Moraine Lake sits at an elevation of 1,884 meters and is frozen over for most of the year — the road to the lake is typically only open from late May to early October.",
+        ],
+        "collection_handle": "moraine-lake-art",
+    },
+    {
+        "key": "nyhavn",
+        "name": "Nyhavn",
+        "location": "Copenhagen",
+        "country": "Denmark",
+        "year": "1673",
+        "description": (
+            "Nyhavn is a colorful 17th-century waterfront canal district in Copenhagen lined with "
+            "brightly painted townhouses, historic wooden ships, and bustling restaurants. Originally "
+            "a busy commercial port, it has become Copenhagen's most iconic postcard image and a "
+            "beloved gathering place for locals and visitors alike."
+        ),
+        "fun_facts": [
+            "Hans Christian Andersen lived at three different addresses in Nyhavn — numbers 18, 20, and 67 — and wrote some of his most famous fairy tales there.",
+            "The colorful buildings were originally painted in bright hues so sailors returning from sea could easily spot Nyhavn from a distance.",
+            "Nyhavn literally means 'New Harbor' — it was dug by Swedish prisoners of war between 1670 and 1673 to connect the King's New Square to the harbor.",
+        ],
+        "collection_handle": "nyhavn-art",
+    },
+    {
+        "key": "plitvice_lakes",
+        "name": "Plitvice Lakes",
+        "location": "Lika-Senj County",
+        "country": "Croatia",
+        "year": "Ancient",
+        "description": (
+            "Plitvice Lakes National Park is a cascading series of 16 terraced lakes connected by "
+            "waterfalls and set within a dense primeval forest in central Croatia. The lakes shift "
+            "in color from azure to green to grey depending on mineral content and sunlight, "
+            "creating one of Europe's most otherworldly natural landscapes."
+        ),
+        "fun_facts": [
+            "The travertine barriers that create the terraced lakes grow at a rate of about 1 centimeter per year through the deposition of calcium carbonate from the water.",
+            "Swimming in the lakes has been banned since 2006 to protect the delicate ecosystem, though the crystal-clear water makes it extremely tempting.",
+            "The park is home to European brown bears, wolves, and lynx — it is one of the last places in Europe where all three large predators coexist.",
+        ],
+        "collection_handle": "plitvice-lakes-art",
+    },
+    {
+        "key": "ponte_vecchio",
+        "name": "Ponte Vecchio",
+        "location": "Florence",
+        "country": "Italy",
+        "year": "1345",
+        "description": (
+            "Ponte Vecchio is a medieval stone bridge over the Arno River in Florence, famous for "
+            "the shops built along its entire length. Originally home to butchers and tanners, "
+            "it has housed jewelers and goldsmiths since the 16th century and is the only bridge "
+            "in Florence to survive World War II intact."
+        ),
+        "fun_facts": [
+            "In 1593, Grand Duke Ferdinand I banned butchers from the bridge due to the smell and replaced them with goldsmiths and jewelers, who remain to this day.",
+            "The Vasari Corridor, a secret elevated passageway, runs above the shops on the bridge connecting the Palazzo Vecchio to the Pitti Palace, allowing the Medici family to cross without mingling with commoners.",
+            "During the German retreat in 1944, Hitler specifically ordered that Ponte Vecchio be spared from destruction, though all other bridges in Florence were blown up.",
+        ],
+        "collection_handle": "ponte-vecchio-art",
+    },
+    {
+        "key": "rialto_bridge",
+        "name": "Rialto Bridge",
+        "location": "Venice",
+        "country": "Italy",
+        "year": "1591",
+        "description": (
+            "The Rialto Bridge is the oldest and most famous of the four bridges spanning Venice's "
+            "Grand Canal, an elegant stone arch supporting rows of shops on either side. Designed "
+            "by Antonio da Ponte, it replaced a series of wooden bridges and has served as the "
+            "commercial heart of Venice for over four centuries."
+        ),
+        "fun_facts": [
+            "Michelangelo and Andrea Palladio both submitted designs for the bridge, but the commission went to the lesser-known Antonio da Ponte, whose surname fittingly means 'bridge.'",
+            "The single stone arch spans 28.8 meters and was considered a remarkable engineering feat — many critics predicted it would collapse, but it has stood for over 430 years.",
+            "The bridge was the only way to cross the Grand Canal on foot for nearly 300 years, until the Ponte dell'Accademia was built in 1854.",
+        ],
+        "collection_handle": "rialto-bridge-art",
+    },
+    {
+        "key": "rijksmuseum",
+        "name": "Rijksmuseum",
+        "location": "Amsterdam",
+        "country": "Netherlands",
+        "year": "1885",
+        "description": (
+            "The Rijksmuseum is the Netherlands' national museum dedicated to Dutch art and history, "
+            "housed in a grand Gothic and Renaissance revival building designed by Pierre Cuypers. "
+            "Home to masterpieces by Rembrandt, Vermeer, and other Dutch Golden Age painters, it is "
+            "the most visited museum in the Netherlands."
+        ),
+        "fun_facts": [
+            "Rembrandt's 'The Night Watch' has its own dedicated gallery and is the museum's most famous work — at 3.6 by 4.4 meters, it was actually trimmed to fit a previous location.",
+            "A public road and bicycle path runs directly through the building's arched passageway, making it the only major museum in the world you can cycle through.",
+            "The museum underwent a massive ten-year renovation completed in 2013 at a cost of 375 million euros, restoring the building to Cuypers' original vision.",
+        ],
+        "collection_handle": "rijksmuseum-art",
+    },
+    {
+        "key": "temple_bar",
+        "name": "Temple Bar District",
+        "location": "Dublin",
+        "country": "Ireland",
+        "year": "1600",
+        "description": (
+            "Temple Bar is Dublin's cultural quarter, a lively cobblestoned neighborhood on the south "
+            "bank of the River Liffey packed with pubs, galleries, street performers, and colorful "
+            "storefronts. Named after Sir William Temple who owned land here in the 1600s, it is "
+            "the social heart of Dublin and Ireland's most famous nightlife district."
+        ),
+        "fun_facts": [
+            "Temple Bar was nearly demolished in the 1980s to make way for a bus depot — the cheap rents during the planning period attracted artists and musicians who gave it the bohemian character it has today.",
+            "The area has nothing to do with drinking establishments — 'bar' comes from a riverside walkway, and 'Temple' from the Temple family who lived nearby.",
+            "Temple Bar hosts Dublin's oldest outdoor food market every Saturday and a book market every weekend at Temple Bar Square.",
+        ],
+        "collection_handle": "temple-bar-district-art",
+    },
+    {
+        "key": "twelve_apostles",
+        "name": "Twelve Apostles",
+        "location": "Great Ocean Road, Victoria",
+        "country": "Australia",
+        "year": "20 million years ago",
+        "description": (
+            "The Twelve Apostles are a collection of limestone sea stacks rising dramatically from "
+            "the Southern Ocean along Victoria's Great Ocean Road. Formed by millions of years of "
+            "erosion by wind and waves, these towering pillars stand up to 45 meters tall and are "
+            "one of Australia's most visited natural landmarks."
+        ),
+        "fun_facts": [
+            "Despite the name, there were never actually twelve stacks — when they were named in the 1960s there were nine, and as of 2024 only seven remain after ongoing erosion caused collapses.",
+            "The stacks were originally called 'The Sow and Piglets' until the name was changed to the more tourist-friendly 'Twelve Apostles' in 1922.",
+            "The limestone cliffs erode at a rate of about 2 centimeters per year, and new stacks are constantly being formed as headlands are gradually worn away.",
+        ],
+        "collection_handle": "twelve-apostles-art",
+    },
+    {
+        "key": "zanzibar_stone_town",
+        "name": "Zanzibar Stone Town",
+        "location": "Zanzibar Island",
+        "country": "Tanzania",
+        "year": "1800s",
+        "description": (
+            "Stone Town is the historic heart of Zanzibar City, a labyrinth of narrow alleys, "
+            "ornately carved wooden doors, and coral stone buildings reflecting centuries of "
+            "African, Arab, Indian, and European influence. Once the center of the East African "
+            "spice and slave trades, this UNESCO World Heritage Site is one of the most culturally "
+            "rich urban areas in Africa."
+        ),
+        "fun_facts": [
+            "Stone Town has over 500 intricately carved wooden doors, many featuring brass studs originally designed to protect against elephant attacks in India — the tradition was carried over by Indian traders.",
+            "Freddie Mercury, the legendary Queen frontman, was born in Stone Town in 1946 as Farrokh Bulsara — his childhood home is now a small museum.",
+            "Zanzibar was once the world's largest producer of cloves, and the spice trade that made the island wealthy still perfumes the air throughout Stone Town's markets.",
+        ],
+        "collection_handle": "zanzibar-stone-town-art",
+    },
 ]
 
 LANDMARKS_BY_KEY = {lm["key"]: lm for lm in LANDMARKS}

@@ -50,13 +50,15 @@ from upload_common import (
 OUTPUT_DIR = Path(__file__).parent / "output"
 MOCKUP_DIR = OUTPUT_DIR / "mockups"
 TRACKER_FILE = Path(__file__).parent / "uploaded_pinterest.json"
-CONFIG_FILE = Path(__file__).parent / ".pinterest_config.json"
-TOKEN_FILE = Path(__file__).parent / ".pinterest_session" / "tokens.json"
+from keychain_config import load_config as _load_keychain_config, save_config as _save_keychain_config
+# Pinterest tokens stored in macOS Keychain as "pinterest_tokens"
 BOARD_CACHE_FILE = Path(__file__).parent / ".pinterest_boards.json"
 
-# Pinterest API
-API_BASE = "https://api.pinterest.com/v5"
-OAUTH_URL = "https://api.pinterest.com/oauth/"
+# Pinterest API — trial apps must use sandbox; production apps use api.pinterest.com
+API_BASE_PROD = "https://api.pinterest.com/v5"
+API_BASE_SANDBOX = "https://api-sandbox.pinterest.com/v5"
+API_BASE = API_BASE_SANDBOX  # sandbox for trial; switch to PROD after Standard Access
+OAUTH_URL = "https://www.pinterest.com/oauth/"
 TOKEN_URL = "https://api.pinterest.com/v5/oauth/token"
 REDIRECT_URI = "http://localhost:9876/callback"
 SCOPES = "boards:read,boards:write,pins:read,pins:write"
@@ -72,24 +74,24 @@ DEFAULT_SHOP_NAME = "ModernDesignCo"
 
 # Board configuration per niche
 NICHE_BOARDS = {
-    "coffee":       "Coffee Lover T-Shirts & Gifts",
-    "dad":          "Dad Jokes & Father's Day Gifts",
-    "drinking":     "Drinking Humor T-Shirts & Gifts",
-    "fitness":      "Gym & Fitness Motivation Shirts",
-    "fridge":       "Funny Fridge Magnets & Kitchen Decor",
-    "funny":        "Funny T-Shirts & Sarcastic Gifts",
-    "gaming":       "Gamer T-Shirts & Gifts",
-    "hobby":        "Hobby & Craft Lover Shirts",
-    "hustle":       "Hustle & Entrepreneur Motivation",
-    "introvert":    "Introvert Life T-Shirts & Gifts",
-    "mom":          "Mom Life T-Shirts & Gifts",
-    "motivational": "Motivational & Inspirational Quotes",
-    "pets":         "Pet Lover T-Shirts & Gifts",
-    "profession":   "Work & Career Humor Shirts",
-    "sarcasm":      "Sarcastic T-Shirts & Gifts",
-    "seasonal":     "Holiday & Seasonal T-Shirts",
-    "stacked":      "Quote T-Shirts & Statement Tees",
-    "stay":         "Travel & Adventure T-Shirts",
+    "coffee":       "Coffee Lover T-Shirts and Gifts",
+    "dad":          "Dad Jokes and Fathers Day Gifts",
+    "drinking":     "Drinking Humor T-Shirts and Gifts",
+    "fitness":      "Gym and Fitness Motivation Shirts",
+    "fridge":       "Funny Fridge Magnets and Kitchen Decor",
+    "funny":        "Funny T-Shirts and Sarcastic Gifts",
+    "gaming":       "Gamer T-Shirts and Gifts",
+    "hobby":        "Hobby and Craft Lover Shirts",
+    "hustle":       "Hustle and Entrepreneur Motivation",
+    "introvert":    "Introvert Life T-Shirts and Gifts",
+    "mom":          "Mom Life T-Shirts and Gifts",
+    "motivational": "Motivational and Inspirational Quotes",
+    "pets":         "Pet Lover T-Shirts and Gifts",
+    "profession":   "Work and Career Humor Shirts",
+    "sarcasm":      "Sarcastic T-Shirts and Gifts",
+    "seasonal":     "Holiday and Seasonal T-Shirts",
+    "stacked":      "Quote T-Shirts and Statement Tees",
+    "stay":         "Travel and Adventure T-Shirts",
 }
 DEFAULT_BOARD = "Print-on-Demand Designs"
 
@@ -99,14 +101,14 @@ DEFAULT_BOARD = "Print-on-Demand Designs"
 # ---------------------------------------------------------------------------
 
 def load_config() -> dict:
-    if CONFIG_FILE.exists():
-        return json.loads(CONFIG_FILE.read_text())
-    return {}
+    try:
+        return _load_keychain_config("pinterest")
+    except FileNotFoundError:
+        return {}
 
 
 def save_config(config: dict) -> None:
-    CONFIG_FILE.write_text(json.dumps(config, indent=2) + "\n")
-    CONFIG_FILE.chmod(0o600)
+    _save_keychain_config("pinterest", config)
 
 
 # ---------------------------------------------------------------------------
@@ -156,20 +158,24 @@ def authorize(app_id: str, app_secret: str) -> dict:
 
     # Start local server to catch the redirect
     server = http.server.HTTPServer(("localhost", 9876), _OAuthHandler)
-    server_thread = threading.Thread(target=server.handle_request, daemon=True)
-    server_thread.start()
+    server.timeout = 300  # 5 minute timeout per request
 
     print("\nOpening browser for Pinterest authorization...")
     print(f"  If the browser doesn't open, visit:\n  {auth_url}\n")
+    print("  Waiting up to 5 minutes for you to log in and click Allow...\n")
     webbrowser.open(auth_url)
 
-    # Wait for the callback
-    server_thread.join(timeout=120)
+    # Handle requests until we get the code or timeout
+    deadline = time.time() + 300
+    while not _auth_code_result["code"] and time.time() < deadline:
+        server.timeout = max(1, deadline - time.time())
+        server.handle_request()
+
     server.server_close()
 
     code = _auth_code_result["code"]
     if not code:
-        print("ERROR: Did not receive authorization code.")
+        print("ERROR: Did not receive authorization code within 5 minutes.")
         sys.exit(1)
 
     # Exchange code for tokens
@@ -219,15 +225,14 @@ def refresh_access_token(app_id: str, app_secret: str, refresh_token: str) -> di
 
 
 def _load_tokens() -> dict:
-    if TOKEN_FILE.exists():
-        return json.loads(TOKEN_FILE.read_text())
-    return {}
+    try:
+        return _load_keychain_config("pinterest_tokens")
+    except FileNotFoundError:
+        return {}
 
 
 def _save_tokens(tokens: dict) -> None:
-    TOKEN_FILE.parent.mkdir(parents=True, exist_ok=True)
-    TOKEN_FILE.write_text(json.dumps(tokens, indent=2) + "\n")
-    TOKEN_FILE.chmod(0o600)
+    _save_keychain_config("pinterest_tokens", tokens)
 
 
 def get_access_token(config: dict) -> str | None:
@@ -377,12 +382,23 @@ def resolve_board(niche: str, access_token: str) -> str:
             _save_board_cache(cache)
             return board["id"]
 
-    # Create new board
+    # Create new board (or handle "already exists" by re-fetching)
     print(f"  Creating board: {board_name}")
-    board = create_board(access_token, board_name, f"{board_name} - Shop our collection!")
-    cache[niche] = {"board_id": board["id"], "name": board["name"]}
-    _save_board_cache(cache)
-    return board["id"]
+    try:
+        board = create_board(access_token, board_name, f"{board_name} - Shop our collection!")
+        cache[niche] = {"board_id": board["id"], "name": board["name"]}
+        _save_board_cache(cache)
+        return board["id"]
+    except Exception as e:
+        if "already have a board" in str(e).lower():
+            # Board exists but wasn't found in list — re-fetch
+            existing = list_boards(access_token)
+            for board in existing:
+                if board["name"].lower() == board_name.lower():
+                    cache[niche] = {"board_id": board["id"], "name": board["name"]}
+                    _save_board_cache(cache)
+                    return board["id"]
+        raise
 
 
 def setup_all_boards(access_token: str) -> None:
@@ -400,11 +416,33 @@ def setup_all_boards(access_token: str) -> None:
 # Design discovery (mockups + metadata)
 # ---------------------------------------------------------------------------
 
-def discover_pinterest_designs(folder: str) -> list[tuple[Path, dict, str]]:
-    """Find mockup images and pair them with metadata.
+def discover_pinterest_designs(folder: str, source_dir: Path | None = None) -> list[tuple[Path, dict, str]]:
+    """Find images and pair them with metadata.
 
-    Returns list of (mockup_path, metadata_dict, niche) tuples.
+    Returns list of (image_path, metadata_dict, niche) tuples.
+
+    If source_dir is provided, looks for *.png + paired *.json in source_dir/folder/.
+    Otherwise uses the default mockup/metadata layout.
     """
+    if source_dir:
+        # External source: PNG + JSON side by side in source_dir/folder/
+        img_dir = source_dir / folder
+        if not img_dir.is_dir():
+            print(f"Error: source folder not found: {img_dir}")
+            sys.exit(1)
+
+        designs = []
+        for png in sorted(img_dir.glob("*.png")):
+            meta_path = png.with_suffix(".json")
+            if not meta_path.exists():
+                continue
+            with open(meta_path) as f:
+                metadata = json.load(f)
+            niche = png.stem.split("_")[0]
+            designs.append((png, metadata, niche))
+        return designs
+
+    # Default: mockup-based layout
     mockup_dir = MOCKUP_DIR / folder
     meta_dir = OUTPUT_DIR / folder
 
@@ -524,7 +562,7 @@ def run_pinterest_upload(args: argparse.Namespace) -> None:
 
     daily_limit = args.daily_limit
 
-    # Get access token (or authorize)
+    # Get access token — always do OAuth if no saved session, then use sandbox token for API
     access_token = get_access_token(config)
     if not access_token:
         tokens = authorize(config["app_id"], config["app_secret"])
@@ -533,23 +571,41 @@ def run_pinterest_upload(args: argparse.Namespace) -> None:
             print("ERROR: Could not obtain access token.")
             sys.exit(1)
 
+    # In sandbox mode, override with portal-generated sandbox token for API calls
+    if not args.production and config.get("sandbox_token"):
+        access_token = config["sandbox_token"]
+        print("  Using sandbox token for API calls\n")
+
     # Setup boards mode
     if args.setup_boards:
         setup_all_boards(access_token)
         return
 
     # Discover designs
-    designs = discover_pinterest_designs(args.folder)
+    source_dir = Path(args.source_dir) if args.source_dir else None
+    board_override = args.board_name
+
+    designs = discover_pinterest_designs(args.folder, source_dir=source_dir)
     if not designs:
-        print(f"No mockup designs found in output/mockups/{args.folder}/")
+        location = str(source_dir / args.folder) if source_dir else f"output/mockups/{args.folder}/"
+        print(f"No designs found in {location}")
         return
-    print(f"Found {len(designs)} mockup designs in output/mockups/{args.folder}/")
+    location = str(source_dir / args.folder) if source_dir else f"output/mockups/{args.folder}/"
+    print(f"Found {len(designs)} designs in {location}")
 
     # Load tracker and filter
     tracker = load_tracker(TRACKER_FILE)
+    # Use a source-specific prefix so external uploads don't collide with default ones
+    key_prefix = f"ext:{source_dir.name}/{args.folder}" if source_dir else args.folder
     to_upload = []
     for mockup_path, meta, niche in designs:
-        key = f"{args.folder}/{mockup_path.stem.replace('_mockup', '')}"
+        stem = mockup_path.stem.replace("_mockup", "")
+        # Strip product suffix for cleaner keys (e.g., _poster, _tshirt)
+        for suffix in ("_poster", "_tshirt", "_sticker"):
+            if stem.endswith(suffix):
+                stem = stem[: -len(suffix)]
+                break
+        key = f"{key_prefix}/{stem}"
         entry = tracker.get(key, {})
         status = entry.get("status")
 
@@ -586,7 +642,7 @@ def run_pinterest_upload(args: argparse.Namespace) -> None:
     # Dry run
     if args.dry_run:
         for i, (mockup_path, meta, niche, key) in enumerate(to_upload, 1):
-            board_name = NICHE_BOARDS.get(niche, DEFAULT_BOARD)
+            board_name = board_override or NICHE_BOARDS.get(niche, DEFAULT_BOARD)
             link = build_pin_link(meta["title"], shop_name)
             print(f"  [{i}] {key}")
             print(f"       Title: {meta['title']}")
@@ -609,9 +665,12 @@ def run_pinterest_upload(args: argparse.Namespace) -> None:
             # Refresh token if needed
             access_token = get_access_token(config) or access_token
 
-            # Resolve board
-            board_id = resolve_board(niche, access_token)
-            board_name = NICHE_BOARDS.get(niche, DEFAULT_BOARD)
+            # Resolve board — use override name or niche lookup
+            effective_niche = "_override" if board_override else niche
+            if board_override and effective_niche not in NICHE_BOARDS:
+                NICHE_BOARDS[effective_niche] = board_override
+            board_id = resolve_board(effective_niche, access_token)
+            board_name = board_override or NICHE_BOARDS.get(niche, DEFAULT_BOARD)
             print(f"  Board: {board_name}")
 
             # Build pin data
@@ -714,10 +773,29 @@ Examples:
         help=f"Redbubble shop name for links (default: {DEFAULT_SHOP_NAME})",
     )
     parser.add_argument(
+        "--source-dir",
+        help="External image source directory (PNG+JSON pairs in source-dir/folder/)",
+    )
+    parser.add_argument(
+        "--board-name",
+        help="Override board name for all pins in this run",
+    )
+    parser.add_argument(
         "--setup-boards", action="store_true",
         help="Create all niche boards and exit",
     )
+    parser.add_argument(
+        "--production", action="store_true",
+        help="Use production API (default: sandbox for trial access)",
+    )
     args = parser.parse_args()
+
+    if args.production:
+        global API_BASE
+        API_BASE = API_BASE_PROD
+        print("Using PRODUCTION API\n")
+    else:
+        print("Using SANDBOX API (trial access)\n")
 
     if args.limit == 0:
         args.limit = None

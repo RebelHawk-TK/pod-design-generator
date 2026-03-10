@@ -3,6 +3,7 @@
 
 Uploads PNG designs with metadata from paired JSON files.
 Uses a persistent browser session so you only log in once.
+Includes retry logic for transient failures (Cloudflare, slow pages).
 
 Usage:
     python3 upload.py --folder tshirt --limit 1       # First run: log in manually
@@ -34,18 +35,32 @@ from upload_common import (
 
 UPLOAD_URL = "https://www.redbubble.com/portfolio/images/new"
 SESSION_DIR = Path(__file__).parent / ".redbubble_session"
-TRACKER_FILE = Path(__file__).parent / "uploaded.json"
+TRACKER_FILE = Path(__file__).parent / "uploaded_redbubble.json"
+LEGACY_TRACKER = Path(__file__).parent / "uploaded.json"
+
+# Retry config for transient failures (Cloudflare, slow loads)
+MAX_RETRIES = 2
+RETRY_DELAY = 10  # seconds between retries
 
 
 # ---------------------------------------------------------------------------
 # Redbubble-specific callbacks
 # ---------------------------------------------------------------------------
 
+def _wait_for_page_ready(page, timeout: int = 30000) -> None:
+    """Wait for the page to be fully interactive (network idle + DOM stable)."""
+    try:
+        page.wait_for_load_state("networkidle", timeout=timeout)
+    except Exception:
+        pass  # fall back to domcontentloaded which we already waited for
+    time.sleep(1)
+
+
 def check_session_valid(page) -> bool:
     """Navigate to upload page and check if we're logged in."""
     try:
         page.goto(UPLOAD_URL, wait_until="domcontentloaded", timeout=30000)
-        time.sleep(3)
+        _wait_for_page_ready(page)
         wait_for_cloudflare(page)
         url = page.url.lower()
         if "login" in url or "sign_in" in url or "auth" in url:
@@ -56,36 +71,54 @@ def check_session_valid(page) -> bool:
 
 
 def wait_for_login(page) -> None:
-    """Wait for the user to log in manually."""
+    """Wait for the user to log in manually (auto-detects when done)."""
     print("\n=== Manual login required ===")
-    print("  1. Log in to your Redbubble account in the browser window.")
-    print("  2. Once logged in, press ENTER here to continue.")
-    input("  Press ENTER when logged in... ")
+    print("  Log in to your Redbubble account in the browser window.")
+    print("  Waiting for login to complete (auto-detecting)...")
+    timeout = 300  # 5 minutes
+    start = time.time()
+    while time.time() - start < timeout:
+        time.sleep(3)
+        try:
+            url = page.url.lower()
+            if "login" not in url and "sign_in" not in url and "auth" not in url:
+                print("  Login detected! Continuing...")
+                time.sleep(2)
+                return
+        except Exception:
+            pass
+    print("  Login timeout (5 min). Continuing anyway...")
     time.sleep(2)
 
 
-def upload_single(page, png_path: Path, metadata: dict) -> None:
-    """Upload one design to Redbubble."""
+def _upload_single_attempt(page, png_path: Path, metadata: dict) -> None:
+    """Single upload attempt to Redbubble (may raise on transient failures)."""
     page.goto(UPLOAD_URL, wait_until="domcontentloaded", timeout=30000)
-    time.sleep(3)
+    _wait_for_page_ready(page)
     wait_for_cloudflare(page)
 
     # Check for login redirect
     if "login" in page.url.lower() or "sign_in" in page.url.lower():
         raise SessionExpiredError("Redirected to login — session expired")
 
-    # Upload the PNG via file input
+    # Upload the PNG via file input — expanded selectors and longer timeout
     file_input = find_element(page, [
         'input[type="file"]',
         'input[accept*="image"]',
         '#upload-input',
         '[data-testid="upload-input"]',
-    ], "file upload input", timeout=15000)
+        'input[name="file"]',
+        'input[accept*="png"]',
+    ], "file upload input", timeout=30000)
     file_input.set_input_files(str(png_path))
 
     # Wait for image processing / form to appear
     print("    Waiting for image processing...")
-    time.sleep(8)
+    try:
+        page.wait_for_load_state("networkidle", timeout=30000)
+    except Exception:
+        pass
+    time.sleep(5)
 
     # Wait for the title field to become available (indicates form is ready)
     title_el = find_element(page, [
@@ -206,8 +239,12 @@ def upload_single(page, png_path: Path, metadata: dict) -> None:
     time.sleep(0.5)
     page.locator('#submit-work').click(timeout=10000)
 
-    # Wait for navigation / confirmation
-    time.sleep(8)
+    # Wait for navigation — poll URL change (large images can take 20+ seconds)
+    print("    Waiting for upload to complete...")
+    for _tick in range(30):  # up to 60 seconds
+        time.sleep(2)
+        if "/images/new" not in page.url.lower():
+            break
 
     # Check for CAPTCHA
     if page_has_captcha(page):
@@ -267,6 +304,41 @@ def upload_single(page, png_path: Path, metadata: dict) -> None:
             raise UploadError(f"Redirected to error page: {page.url[:200]}")
 
 
+def upload_single(page, png_path: Path, metadata: dict) -> None:
+    """Upload one design with retry logic for transient failures."""
+    last_error = None
+    for attempt in range(1, MAX_RETRIES + 2):  # +2 because range is exclusive and attempt 1 is the first try
+        try:
+            _upload_single_attempt(page, png_path, metadata)
+            return  # success
+        except SessionExpiredError:
+            raise  # don't retry auth failures — handled by upload loop
+        except CaptchaError:
+            raise  # don't retry CAPTCHAs — handled by upload loop
+        except Exception as e:
+            last_error = e
+            if attempt <= MAX_RETRIES:
+                print(f"    Attempt {attempt} failed: {e}")
+                print(f"    Retrying in {RETRY_DELAY}s... (attempt {attempt + 1}/{MAX_RETRIES + 1})")
+                time.sleep(RETRY_DELAY)
+            else:
+                raise last_error
+
+
+# ---------------------------------------------------------------------------
+# Tracker migration
+# ---------------------------------------------------------------------------
+
+def _migrate_legacy_tracker() -> None:
+    """One-time migration from uploaded.json to uploaded_redbubble.json."""
+    if LEGACY_TRACKER.exists() and not TRACKER_FILE.exists():
+        import json
+        import shutil
+        shutil.copy2(LEGACY_TRACKER, TRACKER_FILE)
+        data = json.loads(TRACKER_FILE.read_text())
+        print(f"Migrated {len(data)} entries from uploaded.json -> uploaded_redbubble.json")
+
+
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
@@ -277,6 +349,9 @@ def main() -> None:
 
     if args.limit == 0:
         args.limit = None
+
+    # Migrate legacy tracker on first run
+    _migrate_legacy_tracker()
 
     run_upload_loop(
         args=args,

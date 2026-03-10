@@ -1,11 +1,14 @@
-"""Assemble 28s travel/history videos from Ken Burns clips, text overlays, and voiceover.
+"""Assemble 28s travel videos from stock footage clips, text overlays, and voiceover.
+
+Uses real Pexels stock clips instead of Ken Burns on art images.
+Same timeline structure and voiceover scripts as the art-style travel videos.
 
 Video timeline (28s total, under 30s limit):
-    0-3s   Style A, zoom in             (silence)      Landmark name + location
-    3-11s  Style A, pan left-to-right   Voiceover      (no text)
-    11-19s Style B, diagonal pan        Voiceover      (no text)
-    19-25s Style C, reverse pan zoom    Voiceover      (no text)
-    25-28s Style C, zoom out, fade      (silence)      CTA bottom-third
+    0-3s   Stock clip 1           (silence)      Landmark name + location
+    3-11s  Stock clip 2           Voiceover      (no text)
+    11-19s Stock clip 3           Voiceover      (no text)
+    19-25s Stock clip 4 start     Voiceover      (no text)
+    25-28s Stock clip 4 cont.     (silence)      CTA bottom-third
 """
 
 from __future__ import annotations
@@ -21,12 +24,10 @@ from moviepy import (
     CompositeAudioClip,
     CompositeVideoClip,
     ImageClip,
-    VideoClip,
+    VideoFileClip,
     concatenate_videoclips,
     vfx,
 )
-
-from video_gen.ken_burns import make_frame_generator
 
 from .config import (
     AUDIO_CACHE_DIR,
@@ -39,11 +40,9 @@ from .config import (
     HEIGHT,
     INTRO_DURATION,
     LANDMARKS,
-    OUTPUT_DIR,
     OUTRO_DURATION,
-    POSTER_SOURCE_DIR,
-    STYLE_SET_A,
-    STYLE_SET_B,
+    STOCK_CLIPS_DIR,
+    STOCK_OUTPUT_DIR,
     TITLE_FONT,
     TTS_RATE,
     TTS_VOICE,
@@ -54,18 +53,7 @@ from .scripts import TRAVEL_SCRIPTS
 
 
 # ---------------------------------------------------------------------------
-# Camera move assignments for the 5-clip structure
-# ---------------------------------------------------------------------------
-
-INTRO_MOVE = "zoom_in"
-CLIP_1_MOVE = "pan_left_to_right"
-CLIP_2_MOVE = "diagonal"
-CLIP_3_MOVE = "pan_right_to_left_zoom"
-OUTRO_MOVE = "zoom_out"
-
-
-# ---------------------------------------------------------------------------
-# Text overlays
+# Text overlays (reused from compositor.py)
 # ---------------------------------------------------------------------------
 
 def _load_font(font_path: Path, size: int) -> ImageFont.FreeTypeFont:
@@ -80,16 +68,7 @@ def _render_text_overlay(
     bg_alpha: int = 160,
     position: str = "center",
 ) -> np.ndarray:
-    """Render text lines with semi-transparent background.
-
-    Args:
-        text_lines: List of (text, font_size, font_path) tuples.
-        bg_alpha: Background strip transparency (0-255).
-        position: "center" (intro) or "bottom" (outro CTA).
-
-    Returns:
-        RGBA numpy array (HEIGHT x WIDTH x 4).
-    """
+    """Render text lines with semi-transparent background. Returns RGBA array."""
     img = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
@@ -107,11 +86,9 @@ def _render_text_overlay(
     strip_padding = 30
 
     if position == "bottom":
-        # Bottom-third: place text in lower 20% of frame
         strip_bottom = HEIGHT - 80
         strip_top = strip_bottom - total_h - 2 * strip_padding
     else:
-        # Center
         strip_top = (HEIGHT - total_h) // 2 - strip_padding
         strip_bottom = (HEIGHT + total_h) // 2 + strip_padding
 
@@ -152,7 +129,7 @@ def _make_overlay_clip(
 
 
 # ---------------------------------------------------------------------------
-# TTS (separate cache from promo videos)
+# TTS (shared cache with art-style travel videos)
 # ---------------------------------------------------------------------------
 
 async def _generate_tts_async(text: str, output_path: Path) -> None:
@@ -169,6 +146,7 @@ def _generate_voiceover(
 ) -> Path:
     """Generate (or load cached) voiceover for a travel video."""
     AUDIO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    # Same cache key as art-style travel videos — same script, same audio
     cache_path = AUDIO_CACHE_DIR / f"{landmark_id}_travel_{variant}.mp3"
 
     if cache_path.exists() and not force:
@@ -179,45 +157,82 @@ def _generate_voiceover(
 
 
 # ---------------------------------------------------------------------------
-# Poster loading
+# Stock clip loading and processing
 # ---------------------------------------------------------------------------
 
-def _get_poster_path(landmark_id: str, style_id: str, source_dir: Path | None = None) -> Path:
-    base = source_dir or POSTER_SOURCE_DIR
-    return base / f"{landmark_id}_{style_id}_poster.png"
+def _load_stock_clip(clip_path: Path, target_duration: float) -> VideoFileClip:
+    """Load a stock clip and resize/crop to 1080x1920 portrait.
+
+    Handles both portrait and landscape source clips:
+    - Portrait clips get scaled to fit width, cropped vertically if needed
+    - Landscape clips get scaled to fit height, cropped horizontally
+    """
+    clip = VideoFileClip(str(clip_path))
+
+    # Trim to target duration (take from start)
+    if clip.duration > target_duration:
+        clip = clip.subclipped(0, target_duration)
+    elif clip.duration < target_duration:
+        # If clip is shorter than needed, loop it
+        loops_needed = int(target_duration / clip.duration) + 1
+        from moviepy import concatenate_videoclips as concat
+        clip = concat([clip] * loops_needed).subclipped(0, target_duration)
+
+    # Resize/crop to 1080x1920
+    src_w, src_h = clip.size
+    target_aspect = WIDTH / HEIGHT  # 0.5625
+
+    src_aspect = src_w / src_h
+
+    if src_aspect > target_aspect:
+        # Source is wider — scale to match height, crop width
+        scale = HEIGHT / src_h
+        new_w = int(src_w * scale)
+        clip = clip.resized((new_w, HEIGHT))
+        # Center crop to WIDTH
+        x_offset = (new_w - WIDTH) // 2
+        clip = clip.cropped(x1=x_offset, x2=x_offset + WIDTH)
+    else:
+        # Source is taller or same — scale to match width, crop height
+        scale = WIDTH / src_w
+        new_h = int(src_h * scale)
+        clip = clip.resized((WIDTH, new_h))
+        # Center crop to HEIGHT
+        y_offset = (new_h - HEIGHT) // 2
+        clip = clip.cropped(y1=y_offset, y2=y_offset + HEIGHT)
+
+    return clip.with_fps(FPS)
 
 
 # ---------------------------------------------------------------------------
 # Main compositor
 # ---------------------------------------------------------------------------
 
-def compose_travel_video(
+def compose_stock_travel_video(
     landmark_id: str,
     variant: str,
     *,
     force: bool = False,
     source_dir: Path | None = None,
 ) -> Path:
-    """Compose a 28s travel/history video for a landmark.
+    """Compose a 28s travel video using stock footage clips.
 
     Args:
         landmark_id: Key into LANDMARKS dict.
-        variant: "a" or "b" — selects style set and script.
+        variant: "a" or "b" — selects script variant.
         force: Overwrite existing video and regenerate voiceover.
-        source_dir: Override poster source directory.
 
     Returns:
         Path to the output MP4.
     """
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    output_path = OUTPUT_DIR / f"{landmark_id}_travel_{variant}.mp4"
+    STOCK_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    output_path = STOCK_OUTPUT_DIR / f"{landmark_id}_stock_{variant}.mp4"
 
     if output_path.exists() and not force:
         print(f"  Skipping {output_path.name} (exists). Use --force to overwrite.")
         return output_path
 
     lm = LANDMARKS[landmark_id]
-    styles = STYLE_SET_A if variant == "a" else STYLE_SET_B
 
     # Get script
     scripts = TRAVEL_SCRIPTS.get(landmark_id)
@@ -229,20 +244,44 @@ def compose_travel_video(
     print(f"  Generating voiceover ({len(script_text.split())} words)...")
     vo_path = _generate_voiceover(landmark_id, variant, script_text, force=force)
 
-    # Load 3 source images (one per style)
-    images: list[Image.Image] = []
-    for sid in styles:
-        img_path = _get_poster_path(landmark_id, sid, source_dir)
-        if not img_path.exists():
-            raise FileNotFoundError(f"Missing poster: {img_path}")
-        images.append(Image.open(img_path).convert("RGB"))
+    # Load 4 stock clips
+    clip_dir = STOCK_CLIPS_DIR / landmark_id
+    if not clip_dir.exists():
+        raise FileNotFoundError(
+            f"Stock clips not found: {clip_dir}\n"
+            f"Run: python3 download_stock_clips.py --landmark {landmark_id}"
+        )
 
-    print(f"  Building Ken Burns clips (5 segments)...")
+    clip_paths = sorted(clip_dir.glob("clip_*.mp4"))
+    if len(clip_paths) < 4:
+        raise FileNotFoundError(
+            f"Need 4 clips in {clip_dir}, found {len(clip_paths)}.\n"
+            f"Run: python3 download_stock_clips.py --landmark {landmark_id} --force"
+        )
 
-    # --- Intro clip (3s): Style A, zoom in, title overlay ---
-    intro_gen = make_frame_generator(images[0], INTRO_MOVE, INTRO_DURATION)
-    intro_clip = VideoClip(intro_gen, duration=INTRO_DURATION).with_fps(FPS)
+    # Clip durations matching the timeline:
+    # Intro(3) + Clip1(8) + Clip2(8) + Clip3(6) + Outro(5) = 30 raw
+    # Minus 4 crossfades × 0.5s = 28s final
+    # Stock clip 1 → intro (3s)
+    # Stock clip 2 → clip 1 (8s)
+    # Stock clip 3 → clip 2 (8s)
+    # Stock clip 4 → clip 3 (6s) + outro (5s) = 11s
+    durations = [
+        INTRO_DURATION,     # 3s
+        CLIP_1_DURATION,    # 8s
+        CLIP_2_DURATION,    # 8s
+        CLIP_3_DURATION + OUTRO_DURATION,  # 11s (clip 4 spans clip3 + outro)
+    ]
 
+    print(f"  Loading and processing 4 stock clips...")
+    stock_clips = []
+    for i, cpath in enumerate(clip_paths[:4]):
+        stock_clips.append(_load_stock_clip(cpath, durations[i]))
+
+    print(f"  Building video segments...")
+
+    # --- Intro (3s): Stock clip 1 with title overlay ---
+    intro_clip = stock_clips[0].subclipped(0, INTRO_DURATION)
     intro_overlay = _make_overlay_clip(
         [
             (lm["display_name"].upper(), 72, TITLE_FONT),
@@ -257,22 +296,17 @@ def compose_travel_video(
         [intro_clip, intro_overlay], size=(WIDTH, HEIGHT)
     )
 
-    # --- Clip 1 (8s): Style A, pan left-to-right ---
-    clip1_gen = make_frame_generator(images[0], CLIP_1_MOVE, CLIP_1_DURATION)
-    clip1 = VideoClip(clip1_gen, duration=CLIP_1_DURATION).with_fps(FPS)
+    # --- Clip 1 (8s): Stock clip 2 ---
+    clip1 = stock_clips[1].subclipped(0, CLIP_1_DURATION)
 
-    # --- Clip 2 (8s): Style B, diagonal ---
-    clip2_gen = make_frame_generator(images[1], CLIP_2_MOVE, CLIP_2_DURATION)
-    clip2 = VideoClip(clip2_gen, duration=CLIP_2_DURATION).with_fps(FPS)
+    # --- Clip 2 (8s): Stock clip 3 ---
+    clip2 = stock_clips[2].subclipped(0, CLIP_2_DURATION)
 
-    # --- Clip 3 (6s): Style C, reverse pan zoom ---
-    clip3_gen = make_frame_generator(images[2], CLIP_3_MOVE, CLIP_3_DURATION)
-    clip3 = VideoClip(clip3_gen, duration=CLIP_3_DURATION).with_fps(FPS)
+    # --- Clip 3 (6s): Stock clip 4 first part ---
+    clip3 = stock_clips[3].subclipped(0, CLIP_3_DURATION)
 
-    # --- Outro clip (5s): Style C, zoom out, bottom-third CTA ---
-    outro_gen = make_frame_generator(images[2], OUTRO_MOVE, OUTRO_DURATION)
-    outro_clip = VideoClip(outro_gen, duration=OUTRO_DURATION).with_fps(FPS)
-
+    # --- Outro (5s): Stock clip 4 second part with CTA overlay ---
+    outro_clip = stock_clips[3].subclipped(CLIP_3_DURATION, CLIP_3_DURATION + OUTRO_DURATION)
     outro_overlay = _make_overlay_clip(
         [
             ("moderndesignconcept.com", 48, TITLE_FONT),
@@ -306,6 +340,8 @@ def compose_travel_video(
     # --- Add voiceover audio starting at VOICEOVER_START ---
     vo_audio = AudioFileClip(str(vo_path))
     vo_audio = vo_audio.with_start(VOICEOVER_START)
+    # Mix stock clip audio (muted) with voiceover
+    final_video = final_video.without_audio()
     final_audio = CompositeAudioClip([vo_audio])
     final_video = final_video.with_audio(final_audio)
 
@@ -324,6 +360,8 @@ def compose_travel_video(
     # Clean up
     for clip in all_clips:
         clip.close()
+    for sc in stock_clips:
+        sc.close()
     final_video.close()
     vo_audio.close()
 

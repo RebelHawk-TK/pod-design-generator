@@ -26,7 +26,7 @@ __all__ = [
     "POSTER_SOURCE_DIR", "STYLES", "TITLE_FONT", "BODY_FONT",
     "WIDTH", "WORK_RES",
     # Travel-specific
-    "OUTPUT_DIR", "AUDIO_CACHE_DIR",
+    "OUTPUT_DIR", "AUDIO_CACHE_DIR", "STOCK_OUTPUT_DIR", "STOCK_CLIPS_DIR",
     "INTRO_DURATION", "CLIP_1_DURATION", "CLIP_2_DURATION",
     "CLIP_3_DURATION", "OUTRO_DURATION", "CROSSFADE",
     "VOICEOVER_START", "TTS_VOICE", "TTS_RATE",
@@ -39,6 +39,8 @@ __all__ = [
 
 OUTPUT_DIR = BASE_DIR / "output" / "videos_travel"
 AUDIO_CACHE_DIR = OUTPUT_DIR / ".audio_cache"
+STOCK_OUTPUT_DIR = BASE_DIR / "output" / "videos_stock"
+STOCK_CLIPS_DIR = BASE_DIR / "output" / "stock_clips"
 
 # ---------------------------------------------------------------------------
 # Timing (seconds) — 28s total under 30s limit

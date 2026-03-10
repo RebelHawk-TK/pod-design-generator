@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 import time
 from pathlib import Path
 
 import requests
 
-CONFIG_PATH = Path(__file__).parent.parent / ".shopify_config.json"
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from keychain_config import load_config as _load_keychain_config
 
 PRODUCT_FIELDS = (
     "id,title,body_html,handle,product_type,vendor,tags,variants,images,published_at"
@@ -17,15 +19,11 @@ PRODUCT_FIELDS = (
 
 
 def _load_config() -> dict:
-    """Load Shopify config or raise with instructions."""
-    if not CONFIG_PATH.exists():
-        raise FileNotFoundError(
-            "Missing .shopify_config.json — create it with shop_domain, api_token, api_version"
-        )
-    config = json.loads(CONFIG_PATH.read_text())
+    """Load Shopify config from Keychain."""
+    config = _load_keychain_config("shopify")
     for key in ("shop_domain", "api_token", "api_version"):
         if key not in config:
-            raise ValueError(f"Missing '{key}' in .shopify_config.json")
+            raise ValueError(f"Missing '{key}' in shopify config")
     return config
 
 

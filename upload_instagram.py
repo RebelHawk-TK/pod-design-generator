@@ -264,6 +264,17 @@ def upload_single(page, video_path: Path, caption: str) -> None:
     file_input.first.set_input_files(str(video_path))
     print(f"  Video file selected, waiting for processing...")
     time.sleep(5)
+    page.screenshot(path="/tmp/ig_after_file_select.png")
+
+    # Dismiss "Video posts are now shared as reels" modal if present
+    try:
+        ok_btn = page.wait_for_selector('button:has-text("OK")', timeout=5000)
+        if ok_btn:
+            ok_btn.click()
+            print(f"  Dismissed reels info modal")
+            time.sleep(2)
+    except Exception:
+        pass
 
     # Instagram shows crop/edit screens — click Next/Continue using JS click
     # to avoid overlay interception from video preview controls
@@ -315,22 +326,65 @@ def upload_single(page, video_path: Path, caption: str) -> None:
         time.sleep(0.5)
         page.keyboard.type(caption, delay=10)
         print(f"  Caption entered")
+        page.screenshot(path="/tmp/ig_after_caption.png")
     else:
         print(f"  Warning: Could not find caption field")
+        page.screenshot(path="/tmp/ig_no_caption_field.png")
 
     time.sleep(2)
 
-    # Click Share/Post via JS to bypass overlay
+    # Click the Share button in the top-right of the creation flow header
+    # (NOT the share-to-platforms button which opens a sharing modal)
     share_clicked = False
-    for sel in ['div[role="button"]:has-text("Share")', 'button:has-text("Share")', 'button:has-text("Post")']:
-        if js_click(sel, timeout=10000):
-            share_clicked = True
-            break
+
+    # The correct Share button is a <div role="button"> in the creation header bar
+    # It's typically a sibling/near the "New reel" heading at the top
+    share_result = page.evaluate("""() => {
+        // Find the header area of the creation dialog
+        const headers = document.querySelectorAll('div[role="dialog"] div, div[class*="header"]');
+        // Look for a Share button that's at the top of the creation flow
+        const allButtons = document.querySelectorAll('div[role="button"], button');
+        for (const b of allButtons) {
+            const text = b.textContent?.trim();
+            if (text === 'Share') {
+                // Check if this is in the top part of the page/dialog (y < 200)
+                const rect = b.getBoundingClientRect();
+                if (rect.top < 200) {
+                    b.click();
+                    return {clicked: true, y: rect.top, text: text};
+                }
+            }
+        }
+        // Fallback: click first Share button that's not inside a sharing modal
+        for (const b of allButtons) {
+            const text = b.textContent?.trim();
+            if (text === 'Share') {
+                // Skip if it's inside a share/send dialog (has search input nearby)
+                const parent = b.closest('div[role="dialog"]');
+                if (parent && parent.querySelector('input[placeholder="Search"]')) continue;
+                b.click();
+                return {clicked: true, y: b.getBoundingClientRect().top, text: text};
+            }
+        }
+        return {clicked: false};
+    }""")
+
+    if share_result.get("clicked"):
+        share_clicked = True
+        print(f"  Clicked Share button (y={share_result.get('y', '?')})")
+    else:
+        # Last resort: try the old selectors
+        for sel in ['div[role="button"]:has-text("Share")', 'button:has-text("Share")']:
+            if js_click(sel, timeout=5000):
+                share_clicked = True
+                break
 
     if not share_clicked:
+        page.screenshot(path="/tmp/ig_no_share_button.png")
         raise RuntimeError("Could not find Share/Post button")
 
     print(f"  Share button clicked, waiting for upload...")
+    page.screenshot(path="/tmp/ig_after_share_click.png")
 
     # Wait for success confirmation — Instagram shows "Your reel has been shared"
     success_selectors = [
@@ -338,21 +392,40 @@ def upload_single(page, video_path: Path, caption: str) -> None:
         'text="Reel shared"',
         'img[alt="Animated checkmark"]',
         'span:has-text("Your reel has been shared")',
-        'span:has-text("shared")',
     ]
 
-    # Poll for up to 60 seconds for success confirmation
-    deadline = time.time() + 60
+    # Poll for up to 90 seconds for success confirmation
+    deadline = time.time() + 90
+    confirmed = False
     while time.time() < deadline:
+        # Check for error messages first
+        error_text = page.evaluate("""() => {
+            const spans = document.querySelectorAll('span');
+            for (const s of spans) {
+                const t = s.textContent?.toLowerCase() || '';
+                if (t.includes('error') || t.includes('try again') || t.includes('couldn\\'t'))
+                    return s.textContent;
+            }
+            return null;
+        }""")
+        if error_text:
+            page.screenshot(path="/tmp/ig_upload_error.png")
+            raise RuntimeError(f"Instagram error: {error_text}")
+
         for sel in success_selectors:
             try:
                 if page.query_selector(sel):
                     print(f"  Upload confirmed!")
+                    page.screenshot(path="/tmp/ig_upload_success.png")
+                    confirmed = True
                     time.sleep(2)
                     return
             except Exception:
                 continue
         time.sleep(3)
+
+    # Take debug screenshot if we timed out
+    page.screenshot(path="/tmp/ig_upload_timeout.png")
 
     # If we didn't see a confirmation, check if we're back on the feed (also success)
     url = page.url
@@ -360,7 +433,7 @@ def upload_single(page, video_path: Path, caption: str) -> None:
         print(f"  Upload likely succeeded (returned to feed)")
         return
 
-    raise RuntimeError("Upload not confirmed — no success message seen after 60s")
+    raise RuntimeError("Upload not confirmed — no success message seen after 90s")
 
 
 # ---------------------------------------------------------------------------

@@ -85,6 +85,13 @@ interpretation, or browse the complete
 {style["artist"]}'s aesthetic transforms landmarks from around the world.
 Whether you hang it on your wall or wear it on your back, each piece is a reminder
 that art and architecture have always been in dialogue.
+</p>
+
+<p>
+Follow us for more art and travel inspiration:
+<a href="https://www.instagram.com/mdcmoderndesignconcept/" target="_blank">Instagram</a> |
+<a href="https://www.tiktok.com/@moderndesignconcept" target="_blank">TikTok</a> |
+<a href="https://www.pinterest.com/moderndesignconcept/" target="_blank">Pinterest</a>
 </p>"""
 
 
@@ -164,6 +171,13 @@ artistic reinterpretation of this iconic landmark, or explore the
 <a href="{style_url}">{style["name"]} collection</a> for all the world landmarks
 rendered in {style["artist"]}'s unmistakable style. Each purchase is a small act of
 bringing two great traditions, architecture and fine art, into your daily life.
+</p>
+
+<p>
+Follow us for more art and travel inspiration:
+<a href="https://www.instagram.com/mdcmoderndesignconcept/" target="_blank">Instagram</a> |
+<a href="https://www.tiktok.com/@moderndesignconcept" target="_blank">TikTok</a> |
+<a href="https://www.pinterest.com/moderndesignconcept/" target="_blank">Pinterest</a>
 </p>"""
 
 
@@ -242,6 +256,13 @@ every style interpretation of this beloved landmark. Or dive into the
 <a href="{style_url}">{style["name"]} collection</a> to see {style["artist"]}'s
 aesthetic applied to iconic sites across the globe. From poster to tee, each design
 captures a moment where two worlds collide and create something worth holding onto.
+</p>
+
+<p>
+Follow us for more art and travel inspiration:
+<a href="https://www.instagram.com/mdcmoderndesignconcept/" target="_blank">Instagram</a> |
+<a href="https://www.tiktok.com/@moderndesignconcept" target="_blank">TikTok</a> |
+<a href="https://www.pinterest.com/moderndesignconcept/" target="_blank">Pinterest</a>
 </p>"""
 
 

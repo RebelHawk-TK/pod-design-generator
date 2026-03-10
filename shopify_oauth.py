@@ -19,19 +19,18 @@ from urllib.parse import urlencode, urlparse, parse_qs
 
 import requests
 
-CONFIG_PATH = Path(__file__).parent / ".shopify_config.json"
+from keychain_config import load_config as _load_keychain_config, save_config as _save_keychain_config
+
 REDIRECT_URI = "http://localhost:9877/callback"
 SCOPES = "read_content,write_content,read_products,read_orders"
 
 
 def load_config() -> dict:
-    if not CONFIG_PATH.exists():
-        raise FileNotFoundError("Missing .shopify_config.json")
-    return json.loads(CONFIG_PATH.read_text())
+    return _load_keychain_config("shopify")
 
 
 def save_config(config: dict) -> None:
-    CONFIG_PATH.write_text(json.dumps(config, indent=2))
+    _save_keychain_config("shopify", config)
 
 
 class OAuthHandler(BaseHTTPRequestHandler):
