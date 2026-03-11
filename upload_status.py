@@ -16,8 +16,7 @@ from pathlib import Path
 OUTPUT_DIR = Path(__file__).parent / "output"
 
 LANDMARK_DIRS = {
-    "phase1": Path.home() / "Documents/Claude/landmark-style-transfer/output",
-    "phase2": Path.home() / "Documents/Claude/landmark-style-transfer-phase2/output",
+    "all": Path.home() / "Documents/Claude/landmark-style-transfer-unified/output",
 }
 
 PLATFORMS = {

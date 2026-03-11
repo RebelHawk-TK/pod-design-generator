@@ -33,7 +33,7 @@ PROJECT_DIR = Path(__file__).parent
 LOGS_DIR = PROJECT_DIR / "logs"
 PYTHON = "/usr/bin/python3"
 
-LANDMARK_SOURCE = Path.home() / "Documents" / "Claude" / "landmark-style-transfer" / "output"
+LANDMARK_SOURCE = Path.home() / "Documents" / "Claude" / "landmark-style-transfer-unified" / "output"
 
 LAUNCH_AGENTS_DIR = Path.home() / "Library" / "LaunchAgents"
 PLIST_PREFIX = "com.moderndesignconcept.pod-upload"
