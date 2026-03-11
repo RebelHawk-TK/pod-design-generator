@@ -862,4 +862,870 @@ TRAVEL_SCRIPTS: dict[str, dict[str, str]] = {
             "reminders of Zanzibar's history as the Spice Island."
         ),
     },
+    # ── Phase 3 landmarks ───────────────────────────────────────────────
+    "table_mountain": {
+        "a": (
+            "Table Mountain is one of the oldest mountains on Earth, with rocks "
+            "dating back over six hundred million years — predating even the "
+            "dinosaurs. The Khoisan people called it Hoerikwaggo, meaning Sea "
+            "Mountain. Its distinctive flat top was formed by millions of years "
+            "of erosion on horizontal sandstone layers."
+        ),
+        "b": (
+            "Table Mountain is home to over fifteen hundred species of flowering "
+            "plants, more than the entire United Kingdom. Its famous tablecloth "
+            "cloud forms when moisture-laden air rolls over the summit. The "
+            "aerial cableway, opened in 1929, rotates three hundred sixty degrees "
+            "during the ascent, carrying sixty-five passengers per trip to the "
+            "top."
+        ),
+    },
+    "victoria_falls": {
+        "a": (
+            "The Kololo people called it Mosi-oa-Tunya, the Smoke That Thunders. "
+            "Scottish explorer David Livingstone became the first European to see "
+            "the falls in 1855 and named them after Queen Victoria. The Zambezi "
+            "River plunges over three hundred fifty feet into a narrow gorge "
+            "along the border of Zambia and Zimbabwe."
+        ),
+        "b": (
+            "Victoria Falls is the largest curtain of falling water on Earth, "
+            "stretching over a mile wide. The spray from the falls can be seen "
+            "from over thirty miles away and rises up to thirteen hundred feet "
+            "in the air. A natural rock pool called Devil's Pool sits at the "
+            "very edge of the falls, where swimmers can peer over the precipice "
+            "during the dry season."
+        ),
+    },
+    "djemaa_el_fna": {
+        "a": (
+            "Djemaa el-Fna has been Marrakech's main square since the city was "
+            "founded by the Almoravid dynasty in 1070. Its name may translate as "
+            "Assembly of the Dead, possibly referring to public executions held "
+            "there centuries ago. For nearly a thousand years it has served as a "
+            "gathering place for traders, storytellers, and performers."
+        ),
+        "b": (
+            "UNESCO declared Djemaa el-Fna a Masterpiece of the Oral and "
+            "Intangible Heritage of Humanity in 2001. Each evening the square "
+            "transforms as over a hundred food stalls appear, serving traditional "
+            "dishes to thousands. Snake charmers, henna artists, and halqa "
+            "performers — traditional storytellers who gather crowds in circles — "
+            "keep alive traditions passed down through generations."
+        ),
+    },
+    "lalibela_churches": {
+        "a": (
+            "King Lalibela ordered eleven churches carved from solid rock in the "
+            "twelfth and thirteenth centuries in the Ethiopian highlands. Rather "
+            "than being built upward, each church was excavated downward, chiseled "
+            "from a single block of volcanic tuff. Legend says angels helped "
+            "complete the work at night while human laborers rested during the day."
+        ),
+        "b": (
+            "The Church of Saint George, carved in the shape of a cross, is the "
+            "most iconic of Lalibela's rock-hewn churches. An intricate network "
+            "of tunnels and passageways connects all eleven churches. Ethiopian "
+            "Orthodox priests still conduct services in these eight-hundred-year-old "
+            "structures. Lalibela remains a major pilgrimage site, drawing tens "
+            "of thousands of worshippers each Ethiopian Christmas."
+        ),
+    },
+    "serengeti": {
+        "a": (
+            "The Serengeti takes its name from the Maasai word Siringet, meaning "
+            "Endless Plains. The ecosystem has sustained wildlife for millions of "
+            "years across over twelve thousand square miles of grassland. German "
+            "explorers documented the area in the late nineteenth century, and the "
+            "region became a protected game reserve in 1929 and a national park "
+            "in 1951."
+        ),
+        "b": (
+            "The Great Migration sees over one and a half million wildebeest and "
+            "hundreds of thousands of zebras travel in a circular route through "
+            "the Serengeti each year. The ecosystem supports the highest "
+            "concentration of large predators in Africa, including over three "
+            "thousand lions. The Serengeti's kopjes — ancient granite outcroppings — "
+            "serve as lookout posts for cheetahs and shelter for leopards."
+        ),
+    },
+    "borobudur": {
+        "a": (
+            "Borobudur was built in the ninth century during the Sailendra dynasty "
+            "on the island of Java, using over two million blocks of volcanic "
+            "stone. The temple was abandoned after the decline of Buddhist kingdoms "
+            "in Java and lay hidden under volcanic ash and jungle for centuries. "
+            "British lieutenant governor Thomas Stamford Raffles rediscovered it "
+            "in 1814."
+        ),
+        "b": (
+            "Borobudur is the world's largest Buddhist temple, featuring over "
+            "twenty-seven hundred carved relief panels and five hundred four "
+            "Buddha statues. Its nine platforms represent the Buddhist cosmological "
+            "path from earthly desire to enlightenment. At dawn, the temple's "
+            "bell-shaped stupas emerge from mist with volcanic peaks behind them, "
+            "creating one of Southeast Asia's most iconic views."
+        ),
+    },
+    "terracotta_warriors": {
+        "a": (
+            "Emperor Qin Shi Huang commissioned his funerary army around 210 BC "
+            "to protect him in the afterlife. An estimated seven hundred thousand "
+            "laborers worked for decades to create the figures. The warriors were "
+            "discovered accidentally in 1974 by farmers digging a well near Xi'an. "
+            "Archaeologists have so far unearthed over eight thousand soldiers, "
+            "horses, and chariots."
+        ),
+        "b": (
+            "No two terracotta warriors have the same face — each was individually "
+            "sculpted with unique features, hairstyles, and expressions. The "
+            "figures were originally painted in vivid colors that faded within "
+            "minutes of exposure to air. The emperor's actual tomb remains "
+            "unexcavated; ancient texts describe rivers of mercury inside, and "
+            "modern soil testing has confirmed unusually high mercury levels."
+        ),
+    },
+    "golden_temple_amritsar": {
+        "a": (
+            "The Golden Temple was founded in 1577 by Guru Ram Das, the fourth "
+            "Sikh Guru, who excavated the sacred pool known as Amrit Sarovar, "
+            "which gives Amritsar its name. Guru Arjan Dev completed the temple "
+            "in 1604 and installed the Adi Granth, the Sikh holy scripture, "
+            "inside. Maharaja Ranjit Singh covered the upper floors in gold "
+            "leaf in the early nineteenth century."
+        ),
+        "b": (
+            "The Golden Temple's community kitchen, called the Langar, feeds up "
+            "to one hundred thousand visitors every day for free, regardless of "
+            "faith, caste, or background. The temple has four entrances, one on "
+            "each side, symbolizing openness to all people and directions. The "
+            "Harmandir Sahib sits in the center of the sacred pool, reached by "
+            "a causeway, reflecting beautifully on the water at night."
+        ),
+    },
+    "petronas_towers": {
+        "a": (
+            "The Petronas Towers were designed by Argentine-American architect "
+            "Cesar Pelli and completed in 1998 in Kuala Lumpur. At over fourteen "
+            "hundred fifty feet tall, they held the record as the world's tallest "
+            "buildings until 2004. The design incorporates Islamic geometric "
+            "patterns, with floor plans based on eight-pointed stars reflecting "
+            "Malaysia's Muslim heritage."
+        ),
+        "b": (
+            "The Petronas Towers' sky bridge on the forty-first floor is the "
+            "highest two-story bridge in the world, connecting the twin towers "
+            "at five hundred seventy feet above street level. Each tower rests "
+            "on foundations of concrete piles reaching over three hundred feet "
+            "deep. The towers required over thirty-six thousand tonnes of steel "
+            "and over one hundred sixty thousand cubic meters of concrete to build."
+        ),
+    },
+    "halong_bay": {
+        "a": (
+            "Halong Bay in northern Vietnam contains nearly two thousand limestone "
+            "islands and islets formed over five hundred million years. Vietnamese "
+            "legend says a dragon descended from the mountains to defend the coast, "
+            "and the islands are the jewels it spat into the sea. The bay has been "
+            "inhabited since prehistoric times, with evidence of human settlement "
+            "dating back twenty-five thousand years."
+        ),
+        "b": (
+            "Halong Bay's karst islands contain hundreds of caves and grottoes, "
+            "many still being discovered. Floating fishing villages have existed "
+            "on the bay for generations, with families living entirely on the "
+            "water. The bay was designated a UNESCO World Heritage Site in 1994. "
+            "The name Ha Long translates to Descending Dragon, and the bay's "
+            "emerald waters and towering pillars create one of Asia's most "
+            "dramatic landscapes."
+        ),
+    },
+    "sigiriya": {
+        "a": (
+            "King Kashyapa built a fortress and palace atop Sigiriya, a massive "
+            "rock column rising over six hundred feet above the Sri Lankan jungle, "
+            "in the fifth century AD. After seizing the throne from his father, "
+            "he chose this remote location as his stronghold. After Kashyapa's "
+            "defeat in battle, Buddhist monks used the site as a monastery until "
+            "the fourteenth century."
+        ),
+        "b": (
+            "Sigiriya's Mirror Wall was once polished so highly that the king "
+            "could see his reflection as he walked past. Ancient graffiti on the "
+            "wall, dating from the seventh century onward, includes poems and "
+            "comments from visitors — among the oldest known examples of travel "
+            "writing. Frescoes of celestial maidens, painted fifteen hundred "
+            "years ago, still retain their vivid colors in a sheltered alcove."
+        ),
+    },
+    "potala_palace": {
+        "a": (
+            "The Potala Palace was built in its current form by the fifth Dalai "
+            "Lama beginning in 1645 on Marpo Ri hill in Lhasa, Tibet. The White "
+            "Palace served as the seat of government, while the Red Palace housed "
+            "chapels and the tombs of previous Dalai Lamas. Over seven thousand "
+            "workers and fifteen hundred artisans labored on the construction for "
+            "decades."
+        ),
+        "b": (
+            "The Potala Palace contains over a thousand rooms, ten thousand "
+            "shrines, and approximately two hundred thousand statues. At over "
+            "twelve thousand feet above sea level, it was one of the highest "
+            "palaces ever built. The tomb of the fifth Dalai Lama is covered "
+            "in nearly four tonnes of gold. Since the fourteenth Dalai Lama's "
+            "exile in 1959, the palace has served as a museum and UNESCO World "
+            "Heritage Site."
+        ),
+    },
+    "meiji_shrine": {
+        "a": (
+            "Meiji Shrine was built in 1920 to honor Emperor Meiji and Empress "
+            "Shoken, who led Japan's transformation from feudal isolation to modern "
+            "nation during the Meiji Restoration. The original buildings were "
+            "destroyed during World War Two air raids and faithfully reconstructed "
+            "in 1958. The shrine sits within a forest of over one hundred "
+            "thousand trees donated from across Japan."
+        ),
+        "b": (
+            "The forest surrounding Meiji Shrine was entirely man-made, planted "
+            "by over one hundred thousand volunteers who donated trees from every "
+            "prefecture in Japan. Today it has grown into a thriving ecosystem "
+            "in the heart of Tokyo with over three thousand species of plants "
+            "and animals. Over three million people visit the shrine during the "
+            "first three days of each new year for hatsumode, the traditional "
+            "first shrine visit."
+        ),
+    },
+    "gyeongbokgung": {
+        "a": (
+            "Gyeongbokgung Palace was first built in 1395 as the main royal "
+            "palace of the Joseon dynasty, which ruled Korea for over five "
+            "centuries. The palace was destroyed during the Japanese invasions "
+            "of the 1590s and lay in ruins for nearly three hundred years before "
+            "being rebuilt in 1867 by the regent Heungseon Daewongun."
+        ),
+        "b": (
+            "Gyeongbokgung's Gyeonghoeru Pavilion appears to float on a large "
+            "artificial lake and was used for royal banquets and diplomatic "
+            "receptions. The changing of the guard ceremony, performed daily, "
+            "recreates Joseon-era military rituals with soldiers in period "
+            "costumes. Visitors can rent traditional hanbok clothing and explore "
+            "the palace grounds in historical dress, a practice that has become "
+            "one of Seoul's most popular cultural experiences."
+        ),
+    },
+    "zhangjiajie": {
+        "a": (
+            "Zhangjiajie's towering sandstone pillars formed over three hundred "
+            "million years as water and wind eroded a vast plateau of quartz "
+            "sandstone in China's Hunan province. The area became China's first "
+            "national forest park in 1982. Over three thousand narrow pillars, "
+            "some rising over six hundred feet, create an otherworldly landscape "
+            "often shrouded in mist."
+        ),
+        "b": (
+            "Zhangjiajie's pillars inspired the floating mountains in the film "
+            "Avatar, and one pillar was officially renamed the Avatar Hallelujah "
+            "Mountain in 2010. The park's glass-bottomed bridge, opened in 2016, "
+            "spans over fourteen hundred feet across a canyon at a height of "
+            "nearly a thousand feet. Rhesus macaques roam freely throughout the "
+            "park, often approaching visitors on the hiking trails."
+        ),
+    },
+    "acropolis_athens": {
+        "a": (
+            "The Acropolis of Athens has been a site of worship and fortification "
+            "for over three thousand years. The Parthenon, its crowning structure, "
+            "was built between 447 and 432 BC under the leadership of Pericles "
+            "as a temple to the goddess Athena. The architects Iktinos and "
+            "Kallikrates designed it with subtle optical refinements that make "
+            "its columns appear perfectly straight."
+        ),
+        "b": (
+            "The Parthenon's columns actually lean slightly inward and bulge "
+            "in the middle, optical corrections that prevent the building from "
+            "appearing to sag. The temple served as a church and then a mosque "
+            "before a Venetian bombardment in 1687 detonated Ottoman ammunition "
+            "stored inside, causing massive damage. The ongoing restoration has "
+            "been underway since 1975, using original marble and ancient "
+            "construction techniques."
+        ),
+    },
+    "blue_mosque": {
+        "a": (
+            "Sultan Ahmed the First commissioned the Blue Mosque in 1609 to rival "
+            "the nearby Hagia Sophia. Architect Sedefkar Mehmed Aga completed it "
+            "in 1616, creating the only imperial mosque in Istanbul with six "
+            "minarets. The interior is lined with over twenty thousand handmade "
+            "Iznik ceramic tiles featuring blue floral patterns that give the "
+            "mosque its popular name."
+        ),
+        "b": (
+            "When the Blue Mosque was built with six minarets, it sparked "
+            "controversy because only the mosque in Mecca had as many. Sultan "
+            "Ahmed resolved this by funding a seventh minaret at Mecca. The "
+            "mosque's two hundred sixty windows flood the interior with natural "
+            "light, illuminating the blue tilework. It remains an active place "
+            "of worship, closing to tourists five times daily for prayer."
+        ),
+    },
+    "duomo_florence": {
+        "a": (
+            "Construction of Florence's Cathedral, the Duomo, began in 1296 "
+            "under architect Arnolfo di Cambio. The massive dome remained an "
+            "unsolved engineering challenge for over a century until Filippo "
+            "Brunelleschi won a competition in 1418 with his revolutionary "
+            "double-shell design. He completed the dome in 1436 without using "
+            "any external scaffolding or temporary support."
+        ),
+        "b": (
+            "Brunelleschi's dome remains the largest masonry dome ever "
+            "constructed, spanning nearly one hundred fifty feet across. He "
+            "invented new hoisting machines and a herringbone brick pattern to "
+            "build it, keeping his methods secret from rivals. The cathedral's "
+            "facade was not finished until 1887, nearly six centuries after "
+            "construction began. Climbing the four hundred sixty-three steps "
+            "to the lantern rewards visitors with panoramic views of Florence."
+        ),
+    },
+    "tower_of_london": {
+        "a": (
+            "William the Conqueror began building the Tower of London in 1066 "
+            "after his invasion of England. The White Tower, the central keep, "
+            "was completed around 1078 using stone imported from Caen in "
+            "Normandy. Over the centuries the fortress expanded into a complex "
+            "of towers, walls, and moats that served as a royal palace, prison, "
+            "armory, and treasury."
+        ),
+        "b": (
+            "The Crown Jewels have been kept at the Tower of London since 1303. "
+            "Legend says if the Tower's ravens ever leave, the kingdom will fall, "
+            "so their wings are clipped and they are cared for by a dedicated "
+            "Ravenmaster. The Tower has housed famous prisoners including Anne "
+            "Boleyn and Sir Walter Raleigh. Thirty-eight Yeoman Warders, known "
+            "as Beefeaters, still guard the fortress today."
+        ),
+    },
+    "dubrovnik_walls": {
+        "a": (
+            "Dubrovnik's city walls were first constructed in the seventh century "
+            "and expanded over the following thousand years. The walls stretch "
+            "nearly two kilometers around the old city, reaching up to eighty "
+            "feet high and twenty feet thick. The Republic of Ragusa, as "
+            "Dubrovnik was known, maintained its independence for over four "
+            "hundred years partly thanks to these fortifications."
+        ),
+        "b": (
+            "Dubrovnik's walls withstood Ottoman sieges, a devastating earthquake "
+            "in 1667, and shelling during the 1990s Croatian War of Independence. "
+            "The walls feature sixteen towers and five bastions connected by a "
+            "continuous walkway. The city served as a filming location for King's "
+            "Landing in Game of Thrones, bringing a surge of visitors. The walk "
+            "along the walls takes about ninety minutes and offers sweeping "
+            "Adriatic views."
+        ),
+    },
+    "rothenburg": {
+        "a": (
+            "Rothenburg ob der Tauber was a free imperial city of the Holy Roman "
+            "Empire, reaching its peak prosperity in the fourteenth century. When "
+            "the Thirty Years' War devastated the region in the seventeenth "
+            "century, the town fell into economic decline, which ironically "
+            "preserved its medieval character. Its half-timbered houses and "
+            "cobblestone streets survived virtually unchanged for centuries."
+        ),
+        "b": (
+            "Rothenburg's medieval town wall is one of the best preserved in "
+            "Germany, and visitors can walk along most of its length. The town's "
+            "night watchman tour, led by a guide in period costume, has operated "
+            "for decades and recounts tales of medieval life. The Christmas "
+            "Museum and the year-round Kathe Wohlfahrt Christmas shop attract "
+            "visitors from around the world, making Rothenburg synonymous "
+            "with German holiday traditions."
+        ),
+    },
+    "seville_alcazar": {
+        "a": (
+            "The Royal Alcazar of Seville was originally built as a fort by the "
+            "Moors in 913 AD. After the Christian reconquest in 1248, King "
+            "Pedro the First commissioned Mudejar artisans to rebuild the palace "
+            "in the fourteenth century, blending Islamic and Christian artistic "
+            "traditions. It is the oldest royal palace still in use in Europe, "
+            "serving the Spanish royal family today."
+        ),
+        "b": (
+            "The Alcazar's Ambassador Hall features a magnificent half-orange "
+            "dome of gilded and interlocking wood, built without a single nail. "
+            "Its gardens span over seventeen acres, featuring fountains, pavilions, "
+            "and orange groves. The palace doubled as the Water Gardens of Dorne "
+            "in Game of Thrones. Charles the Fifth and Isabella of Portugal were "
+            "married in the palace in 1526."
+        ),
+    },
+    "matterhorn": {
+        "a": (
+            "The Matterhorn's distinctive pyramid shape formed over millions of "
+            "years as glaciers carved its four steep faces. At over fourteen "
+            "thousand seven hundred feet, it straddles the border between "
+            "Switzerland and Italy. Edward Whymper led the first successful "
+            "ascent on July 14, 1865, but four of his seven team members died "
+            "during the descent in one of mountaineering's greatest tragedies."
+        ),
+        "b": (
+            "The Matterhorn inspired the design of the Toblerone chocolate "
+            "logo and the Disneyland roller coaster. Over three thousand climbers "
+            "attempt the summit each year, but the mountain has claimed over "
+            "five hundred lives since records began. The Gornergrat railway, "
+            "opened in 1898, carries visitors to over ten thousand feet for "
+            "panoramic views of the peak and surrounding glaciers."
+        ),
+    },
+    "amalfi_coast": {
+        "a": (
+            "The Amalfi Coast was home to the powerful Maritime Republic of "
+            "Amalfi, which rivaled Venice and Genoa as a Mediterranean trading "
+            "power from the ninth to twelfth centuries. The republic created "
+            "the Tabula Amalfitana, one of the earliest codes of maritime law. "
+            "Terraced lemon groves and pastel-colored villages cling to cliffs "
+            "that plunge over a thousand feet into the Tyrrhenian Sea."
+        ),
+        "b": (
+            "The Amalfi Coast's famous limoncello liqueur is made from sfusato "
+            "lemons, a variety grown only on these terraces. The narrow coastal "
+            "road, built in the mid-nineteenth century, features over a thousand "
+            "curves along just thirty miles. Ravello, perched high above the "
+            "coast, has hosted a music festival since 1953 in gardens where "
+            "Richard Wagner once found inspiration for his opera Parsifal."
+        ),
+    },
+    "trolltunga": {
+        "a": (
+            "Trolltunga, meaning Troll's Tongue, is a horizontal rock formation "
+            "jutting out over Lake Ringedalsvatnet in western Norway. The "
+            "formation was carved during the last ice age roughly ten thousand "
+            "years ago when glacial water froze inside rock crevices and broke "
+            "away chunks, leaving the tongue-shaped ledge suspended about "
+            "thirty-six hundred feet above sea level."
+        ),
+        "b": (
+            "The hike to Trolltunga covers roughly seventeen miles round trip "
+            "and takes ten to twelve hours. The rock juts out horizontally about "
+            "one hundred feet over the lake below. Once a little-known local "
+            "attraction, a viral photo in 2010 turned it into one of Norway's "
+            "most popular hikes, drawing over one hundred thousand visitors "
+            "annually. The hiking season runs from mid-June to mid-September."
+        ),
+    },
+    "meteora": {
+        "a": (
+            "Meteora's sandstone pillars formed over sixty million years ago as "
+            "an ancient sea receded and erosion sculpted the remaining rock into "
+            "towering columns in central Greece. In the fourteenth century, monks "
+            "seeking isolation built monasteries atop these natural towers, "
+            "accessible only by rope ladders and pulley-drawn nets. At their peak, "
+            "twenty-four monasteries stood on the pillars."
+        ),
+        "b": (
+            "Six of Meteora's original twenty-four monasteries remain active "
+            "today, perched on pillars reaching over a thousand feet high. The "
+            "name Meteora means suspended in the air. Until the 1920s, the only "
+            "way to reach most monasteries was by rope basket. Steps carved into "
+            "the rock now provide access, though monks still use the original "
+            "rope systems for hauling supplies."
+        ),
+    },
+    "niagara_falls": {
+        "a": (
+            "Niagara Falls formed roughly twelve thousand years ago as glaciers "
+            "retreated at the end of the last ice age, diverting water from the "
+            "Great Lakes over the Niagara Escarpment. The falls have eroded "
+            "seven miles upstream from their original position. In 1859, Charles "
+            "Blondin crossed the gorge on a tightrope, performing stunts "
+            "including carrying his manager on his back."
+        ),
+        "b": (
+            "Over seven hundred fifty thousand gallons of water flow over Niagara "
+            "Falls every second during peak daytime hours. At night, up to "
+            "seventy-five percent of the water is diverted through tunnels to "
+            "generate hydroelectric power. The falls freeze partially in extreme "
+            "winters, creating spectacular ice formations. The Maid of the Mist "
+            "boat tour has operated since 1846, bringing visitors face to face "
+            "with the thundering cascade."
+        ),
+    },
+    "iguazu_falls": {
+        "a": (
+            "Iguazu Falls stretches nearly two miles along the border of Argentina "
+            "and Brazil, comprising over two hundred seventy individual waterfalls. "
+            "The Guarani people called it the Great Water. Spanish conquistador "
+            "Alvar Nunez Cabeza de Vaca was the first European to document the "
+            "falls in 1541. The surrounding Atlantic Forest is one of the most "
+            "biodiverse regions on the planet."
+        ),
+        "b": (
+            "The Devil's Throat, a U-shaped chasm where fourteen falls converge, "
+            "produces a permanent cloud of mist and a thunderous roar audible "
+            "miles away. Iguazu is taller than Niagara and roughly twice as wide. "
+            "Coatis, toucans, and hundreds of butterfly species inhabit the "
+            "surrounding national parks. Eleanor Roosevelt reportedly exclaimed "
+            "Poor Niagara upon seeing the falls for the first time."
+        ),
+    },
+    "easter_island": {
+        "a": (
+            "The Rapa Nui people settled Easter Island around the twelfth century "
+            "and carved nearly nine hundred moai statues from volcanic tuff at "
+            "the Rano Raraku quarry. The largest completed moai stands over "
+            "thirty feet tall and weighs over eighty tonnes. How they transported "
+            "these massive figures miles across the island remains a subject "
+            "of scholarly debate, with recent experiments suggesting they were "
+            "rocked upright and walked."
+        ),
+        "b": (
+            "Nearly four hundred moai remain at the Rano Raraku quarry in various "
+            "stages of completion, as if the carvers suddenly stopped work. The "
+            "statues originally wore red stone topknots called pukao and had "
+            "coral and obsidian eyes. Easter Island is one of the most remote "
+            "inhabited places on Earth, located over two thousand miles from the "
+            "nearest populated land. The island's original name, Rapa Nui, means "
+            "Great Rock."
+        ),
+    },
+    "tikal": {
+        "a": (
+            "Tikal was one of the largest and most powerful cities of the ancient "
+            "Maya civilization, flourishing from roughly 200 to 900 AD in what "
+            "is now northern Guatemala. At its peak, the city may have housed "
+            "over sixty thousand people. Temple I, known as the Temple of the "
+            "Grand Jaguar, rises over one hundred fifty feet above the central "
+            "plaza and was built around 734 AD as a funerary temple."
+        ),
+        "b": (
+            "Tikal's temples rise above the jungle canopy, and howler monkeys, "
+            "toucans, and spider monkeys inhabit the surrounding rainforest. The "
+            "city contains over three thousand structures spread across six "
+            "square miles, though much remains unexcavated beneath the jungle. "
+            "The site served as a Rebel base in the original Star Wars film. "
+            "Sound travels remarkably well across the central plaza — a handclap "
+            "at one temple echoes clearly from another."
+        ),
+    },
+    "antelope_canyon": {
+        "a": (
+            "Antelope Canyon was formed over millions of years as flash floods "
+            "carved through Navajo sandstone in northern Arizona. The Navajo "
+            "people call it Tse bighanilini, meaning the place where water runs "
+            "through rocks. The narrow slot canyon features flowing walls sculpted "
+            "by water and wind into undulating curves that glow in shades of "
+            "orange, red, and purple."
+        ),
+        "b": (
+            "Light beams that pierce through the narrow openings of Upper "
+            "Antelope Canyon occur only from late March to early October when "
+            "the sun is high enough. The canyon is located on Navajo Nation land "
+            "and can only be visited with a Navajo guide. Flash floods remain "
+            "a serious danger; a 1997 flood tragically killed eleven visitors. "
+            "Photographers often wait hours for the perfect shaft of light."
+        ),
+    },
+    "monument_valley": {
+        "a": (
+            "Monument Valley's sandstone buttes formed over millions of years as "
+            "layers of sediment were deposited, then eroded by wind and water, "
+            "leaving behind the towering formations. The valley lies within the "
+            "Navajo Nation on the Arizona-Utah border. The Navajo have lived "
+            "in the area for centuries, and it holds deep cultural and spiritual "
+            "significance in their traditions."
+        ),
+        "b": (
+            "Monument Valley's iconic silhouette has appeared in more films, "
+            "television shows, and advertisements than perhaps any other American "
+            "landscape. Director John Ford made it famous through classic westerns "
+            "beginning with Stagecoach in 1939. The Mittens, two matching buttes "
+            "with thin spires, are the valley's most recognizable formations. "
+            "The valley floor sits at over five thousand feet elevation and "
+            "receives less than ten inches of rain per year."
+        ),
+    },
+    "yellowstone": {
+        "a": (
+            "Yellowstone became the world's first national park in 1872, "
+            "protecting over two million acres in the Rocky Mountains. The park "
+            "sits atop a massive volcanic hotspot that has produced three "
+            "cataclysmic eruptions over the past two million years. The most "
+            "recent super-eruption, about six hundred forty thousand years ago, "
+            "created the park's vast caldera stretching over thirty miles wide."
+        ),
+        "b": (
+            "Yellowstone contains over half of the world's active geysers, "
+            "including Old Faithful, which erupts roughly every ninety minutes. "
+            "The Grand Prismatic Spring, the largest hot spring in the United "
+            "States, gets its rainbow colors from heat-loving bacteria. The park "
+            "is home to grizzly bears, wolves, bison, and elk. Its underground "
+            "magma chamber could fill the Grand Canyon over eleven times."
+        ),
+    },
+    "sugarloaf_rio": {
+        "a": (
+            "Sugarloaf Mountain rises over thirteen hundred feet from the mouth "
+            "of Guanabara Bay in Rio de Janeiro. The granite monolith formed "
+            "over six hundred million years ago through the slow cooling of "
+            "magma beneath the Earth's surface. The first recorded ascent was "
+            "by British nanny Henrietta Carstairs in 1817, climbing with a "
+            "ladder and iron stakes."
+        ),
+        "b": (
+            "The cable car to Sugarloaf's summit has operated since 1912, making "
+            "it one of the oldest aerial tramways in the world. The system was "
+            "modernized in 1972, and the current cars carry sixty-five passengers "
+            "each. Marmosets and numerous bird species inhabit the Atlantic Forest "
+            "on the mountain's slopes. The panoramic views from the summit "
+            "encompass Copacabana Beach, Christ the Redeemer, and the sprawling "
+            "city below."
+        ),
+    },
+    "lake_louise": {
+        "a": (
+            "Lake Louise was named in 1884 after Princess Louise Caroline Alberta, "
+            "the fourth daughter of Queen Victoria. Tom Wilson, a Canadian Pacific "
+            "Railway employee, was the first European to see the lake in 1882, "
+            "guided there by a Stoney Nakoda man. The turquoise color comes from "
+            "glacial rock flour suspended in meltwater from the Victoria Glacier "
+            "at the lake's far end."
+        ),
+        "b": (
+            "Lake Louise sits at over five thousand six hundred feet elevation in "
+            "Banff National Park. The Fairmont Chateau Lake Louise, originally "
+            "a small log cabin built in 1890, has grown into a grand lakeside "
+            "hotel. In winter the lake freezes solid and hosts an ice sculpture "
+            "festival and outdoor skating rink. The Lake Agnes Tea House above, "
+            "accessible only by hiking trail, has served tea to hikers since 1905."
+        ),
+    },
+    "uluru": {
+        "a": (
+            "Uluru is a sandstone monolith in Australia's Northern Territory, "
+            "sacred to the Anangu Aboriginal people for tens of thousands of "
+            "years. The rock formed around five hundred million years ago from "
+            "sediment deposited by ancient rivers. What visitors see above ground "
+            "is only about one third of the total rock formation, with most of "
+            "it hidden below the surface."
+        ),
+        "b": (
+            "Uluru stands over eleven hundred feet tall and has a circumference "
+            "of nearly six miles. The rock appears to change color throughout "
+            "the day, glowing deep red at sunrise and sunset. In October 2019, "
+            "climbing Uluru was permanently banned to respect Anangu cultural "
+            "traditions. Dozens of springs, waterholes, rock caves, and ancient "
+            "paintings around its base hold deep spiritual significance."
+        ),
+    },
+    "tongariro": {
+        "a": (
+            "Tongariro National Park in New Zealand was the country's first "
+            "national park, gifted to the nation in 1887 by Maori chief Te "
+            "Heuheu Tukino the Fourth to protect its sacred volcanic peaks. The "
+            "park's three active volcanoes — Tongariro, Ngauruhoe, and Ruapehu — "
+            "are central to Maori spiritual beliefs. Tongariro became a UNESCO "
+            "dual World Heritage Site in 1990 for both natural and cultural "
+            "significance."
+        ),
+        "b": (
+            "The Tongariro Alpine Crossing is often called New Zealand's greatest "
+            "day hike, covering twelve miles across volcanic terrain. The "
+            "Emerald Lakes along the route get their vivid color from dissolved "
+            "minerals. Mount Ngauruhoe served as the filming location for Mount "
+            "Doom in the Lord of the Rings films. Mount Ruapehu's crater lake "
+            "is heated by volcanic activity and can reach temperatures of over "
+            "one hundred forty degrees Fahrenheit."
+        ),
+    },
+    "great_barrier_reef": {
+        "a": (
+            "The Great Barrier Reef began forming around twenty thousand years "
+            "ago as sea levels rose after the last ice age and coral colonized "
+            "the shallow continental shelf off northeastern Australia. Stretching "
+            "over fourteen hundred miles, it is the largest living structure on "
+            "Earth, visible from space. Aboriginal and Torres Strait Islander "
+            "peoples have lived along the reef for over sixty thousand years."
+        ),
+        "b": (
+            "The Great Barrier Reef comprises nearly three thousand individual "
+            "reef systems and over nine hundred islands. It supports over fifteen "
+            "hundred species of fish and over four hundred types of coral. The "
+            "reef generates billions of dollars annually for Australia's economy "
+            "through tourism and fishing. Rising ocean temperatures pose the "
+            "greatest threat, causing mass coral bleaching events that have "
+            "intensified in recent decades."
+        ),
+    },
+    "bora_bora": {
+        "a": (
+            "Bora Bora is a volcanic island in French Polynesia surrounded by a "
+            "barrier reef and turquoise lagoon. Mount Otemanu, the remnant of "
+            "an extinct volcano, rises over two thousand three hundred feet at "
+            "its center. Polynesian settlers arrived around the fourth century "
+            "AD. During World War Two, the United States established a military "
+            "base on the island with over six thousand servicemen."
+        ),
+        "b": (
+            "Bora Bora's lagoon is home to manta rays, sea turtles, and "
+            "blacktip reef sharks that swim in shallow, crystal-clear water. The "
+            "island pioneered the overwater bungalow concept in the 1960s, which "
+            "has since spread to tropical resorts worldwide. The island has no "
+            "public transportation; most visitors travel by boat. Bora Bora's "
+            "name comes from the Tahitian word Pora Pora, meaning First Born."
+        ),
+    },
+    "burj_khalifa": {
+        "a": (
+            "The Burj Khalifa in Dubai stands over twenty-seven hundred feet "
+            "tall, making it the tallest structure ever built by humans. "
+            "Designed by Adrian Smith of Skidmore, Owings and Merrill, "
+            "construction took six years and was completed in 2010. The Y-shaped "
+            "floor plan was inspired by the Hymenocallis flower and helps reduce "
+            "wind forces on the tower."
+        ),
+        "b": (
+            "The Burj Khalifa contains over one hundred sixty floors, fifty-seven "
+            "elevators, and over twenty-four thousand glass panels. The building "
+            "is so tall that temperatures at the top can be over ten degrees "
+            "cooler than at the base. Its observation deck on the 148th floor is "
+            "the highest in the world. The tower uses a condensation collection "
+            "system that harvests roughly fifteen million gallons of water "
+            "annually for landscape irrigation."
+        ),
+    },
+    "wadi_rum": {
+        "a": (
+            "Wadi Rum, meaning Valley of the Moon in Arabic, has been inhabited "
+            "for over twelve thousand years. Nabataean traders left behind "
+            "petroglyphs and temple ruins throughout the valley. T. E. Lawrence, "
+            "known as Lawrence of Arabia, used Wadi Rum as a base during the "
+            "Arab Revolt against the Ottoman Empire in 1917 and described the "
+            "landscape as vast, echoing, and godlike."
+        ),
+        "b": (
+            "Wadi Rum's sandstone and granite formations rise up to nearly six "
+            "thousand feet from the desert floor. Bedouin communities have lived "
+            "in the valley for generations and now host visitors in traditional "
+            "camps. The desert served as a filming location for The Martian, "
+            "doubling as the surface of Mars. Ancient rock inscriptions in over "
+            "twenty-five thousand locations record thousands of years of human "
+            "passage through the valley."
+        ),
+    },
+    "sheikh_zayed_mosque": {
+        "a": (
+            "The Sheikh Zayed Grand Mosque in Abu Dhabi was commissioned by the "
+            "late President Sheikh Zayed bin Sultan Al Nahyan and completed in "
+            "2007 after twelve years of construction. Over three thousand workers "
+            "and thirty-eight contractors from around the world contributed to "
+            "the project. The mosque blends Mamluk, Ottoman, and Fatimid "
+            "architectural styles using materials from over twenty countries."
+        ),
+        "b": (
+            "The Sheikh Zayed Grand Mosque can accommodate over forty thousand "
+            "worshippers. Its main prayer hall contains the world's largest hand-"
+            "knotted carpet, covering over sixty thousand square feet and made "
+            "by twelve hundred artisans over two years. Seven chandeliers contain "
+            "millions of Swarovski crystals. The mosque's eighty-two white marble "
+            "domes and over a thousand columns reflect in surrounding pools, "
+            "creating a luminous effect at night."
+        ),
+    },
+    "cappadocia": {
+        "a": (
+            "Cappadocia's fairy chimneys formed over millions of years as volcanic "
+            "eruptions blanketed central Turkey in thick layers of soft tuff, "
+            "which eroded unevenly beneath harder basalt caps. Early Christians "
+            "carved churches, monasteries, and entire underground cities into "
+            "the soft rock beginning in the fourth century to shelter from Roman "
+            "persecution and later Arab raids."
+        ),
+        "b": (
+            "Cappadocia's underground cities extend as deep as eight levels, with "
+            "Derinkuyu capable of sheltering up to twenty thousand people. Each "
+            "morning, hundreds of hot air balloons rise over the fairy chimneys "
+            "at dawn, creating one of the world's most photographed scenes. The "
+            "Goreme Open-Air Museum preserves rock-cut churches with Byzantine "
+            "frescoes dating from the tenth to twelfth centuries. UNESCO designated "
+            "the region a World Heritage Site in 1985."
+        ),
+    },
+    "northern_lights_iceland": {
+        "a": (
+            "The Northern Lights, or aurora borealis, occur when charged particles "
+            "from the sun interact with gases in Earth's atmosphere along magnetic "
+            "field lines near the poles. Iceland's location just below the Arctic "
+            "Circle places it in the auroral zone, making it one of the best "
+            "places on Earth to witness the phenomenon. Norse mythology attributed "
+            "the lights to reflections from the armor of the Valkyries."
+        ),
+        "b": (
+            "Iceland's dark winters from September to March provide ideal viewing "
+            "conditions for the Northern Lights. The lights can appear as green, "
+            "pink, purple, or red, depending on which atmospheric gas is excited "
+            "and at what altitude. Solar activity follows an eleven-year cycle, "
+            "with more frequent and vivid displays during solar maximum. The "
+            "lights are often visible from Reykjavik itself, but remote areas "
+            "away from light pollution offer the most spectacular views."
+        ),
+    },
+    "li_river_guilin": {
+        "a": (
+            "The Li River flows for over one hundred miles through some of "
+            "China's most dramatic karst landscapes in the Guangxi region. The "
+            "limestone peaks along its banks formed over three hundred million "
+            "years ago from ancient seabeds pushed upward by tectonic forces, "
+            "then sculpted by tropical rainfall. Chinese painters have depicted "
+            "this scenery for over a thousand years."
+        ),
+        "b": (
+            "The twenty-yuan banknote features the Li River landscape near the "
+            "town of Yangshuo. Traditional cormorant fishermen still work the "
+            "river at night using trained birds to catch fish by lantern light, "
+            "a technique practiced for over a thousand years. The river cruise "
+            "from Guilin to Yangshuo passes hundreds of karst peaks, each with "
+            "a poetic name inspired by its shape."
+        ),
+    },
+    "mysore_palace": {
+        "a": (
+            "Mysore Palace was originally built in the fourteenth century as a "
+            "wooden structure for the Wadiyar dynasty, rulers of the Kingdom of "
+            "Mysore. After a fire destroyed the previous palace in 1897, the "
+            "current Indo-Saracenic building was designed by British architect "
+            "Henry Irwin and completed in 1912. The Wadiyar rulers commissioned "
+            "stained glass, carved doors, and mosaic floors from across the world."
+        ),
+        "b": (
+            "During the annual Dasara festival, Mysore Palace is illuminated "
+            "by nearly one hundred thousand light bulbs, transforming it into "
+            "a glowing spectacle visible for miles. The palace's Durbar Hall "
+            "features ornate ceilings painted with scenes from Hindu mythology. "
+            "Mysore Palace is one of India's most visited tourist attractions "
+            "after the Taj Mahal, drawing over six million visitors annually."
+        ),
+    },
+    "banaue_rice_terraces": {
+        "a": (
+            "The Banaue Rice Terraces were carved into the mountains of Ifugao "
+            "province in the Philippines by the ancestors of the indigenous "
+            "Ifugao people, beginning roughly two thousand years ago. The "
+            "terraces follow the natural contours of the Cordillera mountains "
+            "and are irrigated by a sophisticated system of channels fed by "
+            "rainforests above. If laid end to end, the terraces would stretch "
+            "over twelve thousand miles."
+        ),
+        "b": (
+            "The Banaue Rice Terraces are often called the Eighth Wonder of the "
+            "World. They were designated a UNESCO World Heritage Site in 1995. "
+            "The Ifugao people continue to cultivate rice on these terraces using "
+            "traditional methods passed down through generations. The terraces "
+            "face threats from erosion and younger generations moving to cities. "
+            "Local conservation efforts work to maintain both the physical "
+            "structures and the cultural traditions that sustain them."
+        ),
+    },
 }

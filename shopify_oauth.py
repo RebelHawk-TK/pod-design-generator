@@ -22,7 +22,7 @@ import requests
 from keychain_config import load_config as _load_keychain_config, save_config as _save_keychain_config
 
 REDIRECT_URI = "http://localhost:9877/callback"
-SCOPES = "read_content,write_content,read_products,read_orders"
+SCOPES = "read_content,write_content,read_products,write_products,read_orders"
 
 
 def load_config() -> dict:
@@ -116,7 +116,7 @@ def main():
     # Step 4: Save to config
     config["api_token"] = access_token
     save_config(config)
-    print(f"\nSaved access token to {CONFIG_PATH}")
+    print("\nSaved access token to Keychain")
     print("You can now run: python3 generate_blog_posts.py --upload --draft")
 
 
