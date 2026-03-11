@@ -92,8 +92,7 @@ def _find_metadata_for_design(page, design_id: str) -> dict:
             base = key.replace("ext:", "")
             # Try both phase directories
             for phase_dir in [
-                Path("/Users/rebelhawk/Documents/Claude/landmark-style-transfer/"),
-                Path("/Users/rebelhawk/Documents/Claude/landmark-style-transfer-phase2/"),
+                Path("/Users/rebelhawk/Documents/Claude/landmark-style-transfer-unified/"),
             ]:
                 json_path = phase_dir / f"{base}.json"
                 if json_path.exists():

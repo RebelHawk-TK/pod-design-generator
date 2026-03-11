@@ -13,7 +13,7 @@ FONTS_DIR = BASE_DIR / "fonts"
 OUTPUT_DIR = BASE_DIR / "output" / "videos"
 AUDIO_CACHE_DIR = OUTPUT_DIR / ".audio_cache"
 POSTER_SOURCE_DIR = (
-    BASE_DIR.parent / "landmark-style-transfer" / "output" / "poster"
+    BASE_DIR.parent / "landmark-style-transfer-unified" / "output" / "poster"
 )
 
 # ---------------------------------------------------------------------------
