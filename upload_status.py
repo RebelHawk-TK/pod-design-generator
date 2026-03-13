@@ -48,6 +48,21 @@ PLATFORMS = {
     },
 }
 
+# Video platforms (separate from image/product platforms)
+VIDEO_PLATFORMS = {
+    "youtube": {
+        "tracker": Path(__file__).parent / "uploaded_youtube.json",
+        "type": "api",
+    },
+    "tiktok": {
+        "tracker": Path(__file__).parent / "uploaded_tiktok.json",
+        "type": "api",
+    },
+}
+
+VIDEO_DIR = Path(__file__).parent / "output"
+VIDEO_FOLDERS = ["videos", "videos_travel", "videos_stock"]
+
 FOLDERS = ["tshirt", "sticker", "poster"]
 
 
@@ -158,6 +173,26 @@ def platform_stats(platform: str, info: dict) -> dict:
     }
 
 
+def count_videos() -> dict[str, int]:
+    """Count available videos."""
+    counts = {}
+    for folder in VIDEO_FOLDERS:
+        folder_path = VIDEO_DIR / folder
+        if folder_path.is_dir():
+            counts[folder] = len(list(folder_path.glob("*.mp4")))
+        else:
+            counts[folder] = 0
+    return counts
+
+
+def video_platform_stats(info: dict) -> dict:
+    """Get upload stats for a video platform."""
+    tracker = load_tracker(info["tracker"])
+    success = sum(1 for v in tracker.values() if v.get("status") == "success")
+    failed = sum(1 for v in tracker.values() if v.get("status") == "failed")
+    return {"success": success, "failed": failed, "total_tracked": len(tracker), "type": info["type"]}
+
+
 def print_dashboard(compact: bool = False) -> None:
     """Print the upload status dashboard."""
     pod_counts = count_designs()
@@ -233,10 +268,39 @@ def print_dashboard(compact: bool = False) -> None:
 
         print(f"    TOTAL: {total_success:>4} / {total_available}  ({pct:.1f}%)")
 
+    # Video platforms
+    vid_counts = count_videos()
+    total_videos = sum(vid_counts.values())
+
+    print(f"\n{'=' * 66}")
+    print(f"  VIDEO UPLOADS")
+    print(f"{'=' * 66}")
+    print(f"\n  Video Inventory:")
+    for folder, count in vid_counts.items():
+        print(f"    {folder:<18} {count:>4}")
+    print(f"    {'TOTAL':<18} {total_videos:>4}")
+
+    print(f"\n  Platform Status:")
+    print("-" * 66)
+
+    for platform, info in VIDEO_PLATFORMS.items():
+        stats = video_platform_stats(info)
+        remaining = total_videos - stats["success"]
+        pct = (stats["success"] / total_videos * 100) if total_videos else 0
+        print(f"\n  {platform.upper()} [API]")
+        print(f"    Uploaded: {stats['success']:>4} done  |  {stats['failed']:>2} failed  |  {remaining:>5} remaining")
+        print(f"    TOTAL: {stats['success']:>4} / {total_videos}  ({pct:.1f}%)")
+
     print("\n" + "-" * 66)
     grand_done = sum(platform_stats(p, i)["success"] for p, i in PLATFORMS.items())
     grand_total = (total_pod + total_lm) * len(PLATFORMS)
-    print(f"  GRAND TOTAL: {grand_done}/{grand_total} uploads ({grand_done/grand_total*100 if grand_total else 0:.1f}%)")
+    vid_done = sum(video_platform_stats(i)["success"] for i in VIDEO_PLATFORMS.values())
+    vid_total = total_videos * len(VIDEO_PLATFORMS)
+    all_done = grand_done + vid_done
+    all_total = grand_total + vid_total
+    print(f"  PRODUCTS: {grand_done}/{grand_total} uploads ({grand_done/grand_total*100 if grand_total else 0:.1f}%)")
+    print(f"  VIDEOS:   {vid_done}/{vid_total} uploads ({vid_done/vid_total*100 if vid_total else 0:.1f}%)")
+    print(f"  COMBINED: {all_done}/{all_total} ({all_done/all_total*100 if all_total else 0:.1f}%)")
     print("=" * 66)
 
 
