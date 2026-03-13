@@ -4,7 +4,7 @@ Three template variations with different narrative structures,
 each producing ~500-800 words of semantic HTML body content.
 """
 
-STORE_URL = "https://modern-design-concept-2.myshopify.com"
+STORE_URL = "https://moderndesignconcept.com"
 
 
 def template_a(landmark: dict, style: dict) -> str:

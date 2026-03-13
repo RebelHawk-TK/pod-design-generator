@@ -207,6 +207,18 @@ def upload_single(page, video_path: Path, caption: str) -> None:
     time.sleep(5)
     wait_for_cloudflare(page)
 
+    # Dismiss "A video you were editing wasn't saved" modal if present
+    try:
+        for btn_text in ["Discard", "Continue"]:
+            btn = page.query_selector(f'button:has-text("{btn_text}")')
+            if btn and btn.is_visible():
+                page.evaluate("el => el.click()", btn)
+                print(f"  Dismissed unsaved video modal ({btn_text})")
+                time.sleep(3)
+                break
+    except Exception:
+        pass
+
     # Check if page loaded properly (TikTok sometimes shows error)
     if page.query_selector('text="Something went wrong"'):
         print(f"  TikTok showed error page, retrying...")
@@ -246,6 +258,7 @@ def upload_single(page, video_path: Path, caption: str) -> None:
 
         # Look for common dismiss buttons inside modals
         dismiss_selectors = [
+            'button:has-text("Discard")',
             'button:has-text("Got it")',
             'button:has-text("OK")',
             'button:has-text("Done")',

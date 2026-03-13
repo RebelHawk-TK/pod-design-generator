@@ -1,10 +1,13 @@
 #!/bin/bash
-# Upload next videos from randomized queue to TikTok and Instagram
-# Schedule: Daily at 3:00 AM (was Tue/Fri only)
-# Volume: 9 videos per run (tripled from 3)
+# Upload next videos to TikTok, Instagram, and YouTube
+# Schedule: Daily at 3:00 AM
+# Volume: 9 videos (TikTok/IG) + 9 YouTube Shorts per run
 cd "$(dirname "$0")"
 echo "=== Video Upload $(date) ==="
 
 caffeinate -s /usr/bin/python3 upload_queue.py --limit 9
+
+echo "--- YouTube Shorts ---"
+/usr/bin/python3 upload_youtube.py --upload --limit 9
 
 echo "=== Done $(date) ==="
