@@ -157,12 +157,13 @@ def generate_mission_statement():
     pdf.section("Revenue Streams", 2)
     w = [60, 35, 35, 30, 30]
     pdf.table_row(["Platform", "Products", "Price Range", "Margin", "Status"], w, bold=True)
-    pdf.table_row(["Printify (via Shopify)", "601", "$4.99-$24.99", "~40%", "Active"], w)
-    pdf.table_row(["TeePublic", "67", "$14-$25", "~15%", "Active"], w)
-    pdf.table_row(["Pinterest (referral)", "32 pins", "N/A", "Traffic", "Active"], w)
-    pdf.table_row(["Instagram Reels", "45 videos", "N/A", "Brand", "Active"], w)
-    pdf.table_row(["TikTok", "27 videos", "N/A", "Brand", "Active"], w)
-    pdf.table_row(["Redbubble", "158", "$15-$30", "~20%", "Legacy"], w)
+    pdf.table_row(["Printify (via Shopify)", "1,164", "$4.99-$24.99", "~40%", "Active"], w)
+    pdf.table_row(["TeePublic", "385", "$14-$25", "~15%", "Active"], w)
+    pdf.table_row(["Pinterest (referral)", "12 pins", "N/A", "Traffic", "Active"], w)
+    pdf.table_row(["Instagram Reels", "79 videos", "N/A", "Brand", "Active"], w)
+    pdf.table_row(["TikTok", "69 videos", "N/A", "Brand", "Active"], w)
+    pdf.table_row(["YouTube Shorts", "5 videos", "N/A", "Brand", "Active"], w)
+    pdf.table_row(["Redbubble", "48", "$15-$30", "~20%", "Paused"], w)
     pdf.ln(4)
 
     # Products
@@ -179,12 +180,12 @@ def generate_mission_statement():
     pdf.ln(2)
 
     pdf.section("Design Collection", 3)
-    pdf.bullet("50 world landmarks across 2 phases (25 per phase)")
-    pdf.bullet("6 art styles per landmark = 300 unique landmark designs")
+    pdf.bullet("97 world landmarks across 3 phases (25 + 25 + 48)")
+    pdf.bullet("6 art styles per landmark = 582 unique landmark designs (tshirt + poster each = 1,164)")
     pdf.bullet("709 template-based t-shirt designs (14 themed categories)")
     pdf.bullet("705 template-based sticker designs")
     pdf.bullet("702 template-based poster designs")
-    pdf.bullet("Total: ~2,816 unique product designs")
+    pdf.bullet("Total: ~3,280 unique product designs")
     pdf.ln(4)
 
     # Landmarks
@@ -205,6 +206,13 @@ def generate_mission_statement():
         "Mont Saint-Michel, Moraine Lake, Nyhavn, Ponte Vecchio, Rialto Bridge, "
         "Rijksmuseum, Temple Bar, Twelve Apostles, Zanzibar Stone Town."
     )
+    pdf.section("Phase 3 (48 Landmarks)", 3)
+    pdf.body(
+        "48 additional world landmarks completing the global collection. Includes destinations "
+        "across Africa, Asia, Europe, and the Americas. 3 overlap landmarks (Chichen Itza, "
+        "Pyramids of Giza, Santorini) resolved in favor of Phase 1 versions. Each landmark "
+        "rendered in all 6 art styles as both poster and t-shirt designs (282 posters + 282 tshirts)."
+    )
 
     # Art Styles
     pdf.section("Art Styles", 2)
@@ -220,10 +228,12 @@ def generate_mission_statement():
     pdf.section("Marketing Channels")
     pdf.bullet("Shopify Storefront (moderndesignconcept.com) -- Primary sales channel")
     pdf.bullet("AI Art Gallery (rebelhawk-tk.github.io/ai-art-gallery) -- Showcase + SEO")
-    pdf.bullet("Blog (300 SEO-optimized posts, auto-published 6/week)")
+    pdf.bullet("Blog (582 SEO-optimized posts, auto-published 18/week)")
     pdf.bullet("Instagram Reels (landmark promo + travel art videos)")
     pdf.bullet("TikTok (short-form video content)")
-    pdf.bullet("Pinterest (product discovery, 32 pins)")
+    pdf.bullet("YouTube Shorts (short-form video content)")
+    pdf.bullet("Pinterest (product discovery, 12 pins)")
+    pdf.bullet("Facebook Page (Modern Design Concept)")
     pdf.bullet("Google Shopping Feed (product listings)")
     pdf.bullet("Telegram Bot (customer/admin notifications)")
     pdf.ln(4)
@@ -231,9 +241,10 @@ def generate_mission_statement():
     # Growth
     pdf.section("Growth Strategy")
     pdf.body(
-        "1. Content Velocity: Automated publishing of 6 blog posts and 2 videos per week "
-        "builds SEO authority and social presence with zero manual effort.\n\n"
-        "2. Platform Expansion: Currently on 6+ platforms with planned expansion to Etsy "
+        "1. Content Velocity: Automated publishing of 18 blog posts/week and 9 videos/day "
+        "across 3 platforms (Instagram, TikTok, YouTube) builds SEO authority and social "
+        "presence with zero manual effort.\n\n"
+        "2. Platform Expansion: Currently on 8+ platforms with planned expansion to Etsy "
         "and TikTok Shop for marketplace syndication.\n\n"
         "3. Catalog Expansion: 705 sticker designs ready for Printify upload. Additional "
         "landmark phases and art styles can be generated on demand.\n\n"
@@ -284,6 +295,7 @@ def generate_technical_breakdown():
     pdf.table_row(["E-commerce", "Shopify REST/GraphQL", "Product & blog management"], w)
     pdf.table_row(["Scheduling", "macOS launchd", "Automated task execution"], w)
     pdf.table_row(["Credentials", "macOS Keychain", "Encrypted secret storage"], w)
+    pdf.table_row(["Instagram Upload", "Instagram Graph API", "Reels publishing (API-based)"], w)
     pdf.table_row(["Email", "Microsoft Graph API", "Inbox monitoring"], w)
     pdf.table_row(["Version Control", "Git + GitHub", "Source management"], w)
     pdf.ln(4)
@@ -338,7 +350,8 @@ def generate_technical_breakdown():
         "landmark photography. This produces the premium 'art print' collection.\n\n"
         "Phase 1: 25 landmarks x 6 styles = 150 poster + 150 tshirt designs\n"
         "Phase 2: 25 landmarks x 6 styles = 150 poster + 150 tshirt designs\n"
-        "Total: 600 landmark art designs\n\n"
+        "Phase 3: 48 landmarks x 6 styles = 282 poster + 282 tshirt designs\n"
+        "Total: 1,164 landmark art designs (97 landmarks x 6 styles x 2 products)\n\n"
         "Each design includes rich metadata: landmark history, art style description, "
         "geographic coordinates, and SEO-optimized tags."
     )
@@ -384,13 +397,23 @@ def generate_technical_breakdown():
         "Script: upload_teepublic.py"
     )
 
-    pdf.section("Instagram & TikTok", 3)
+    pdf.section("Instagram", 3)
+    pdf.body(
+        "Video upload via Instagram Graph API (upload_instagram_api.py).\n"
+        "Flow: Upload video to tmpfiles.org -> Create media container -> Poll status -> Publish\n"
+        "Rate: 60-second delay between uploads\n"
+        "Token: Long-lived (60-day, auto-refresh)\n"
+        "Tracker: uploaded_instagram.json\n"
+        "Script: upload_instagram_api.py"
+    )
+
+    pdf.section("TikTok", 3)
     pdf.body(
         "Video upload via Playwright browser automation.\n"
-        "Flow: Login -> Create Reel/Video -> Upload file -> Add caption -> Share\n"
+        "Flow: Login -> Create Video -> Upload file -> Add caption -> Share\n"
         "Rate: 120-second delay between uploads\n"
-        "Queue: upload_queue.json (250 videos, randomized order)\n"
-        "Scripts: upload_instagram.py, upload_tiktok.py"
+        "Queue: upload_queue.json (485 videos, randomized order)\n"
+        "Script: upload_tiktok.py"
     )
 
     pdf.section("Batch Orchestrator", 2)
@@ -408,9 +431,9 @@ def generate_technical_breakdown():
     pdf.body(
         "Generates and publishes SEO-optimized blog posts to Shopify.\n\n"
         "Pipeline:\n"
-        "  blog/data/landmarks.py    -- 50 landmark definitions\n"
+        "  blog/data/landmarks.py    -- 97 landmark definitions\n"
         "  blog/data/styles.py       -- 6 art style definitions\n"
-        "  blog/generator.py         -- Cartesian product (300 posts)\n"
+        "  blog/generator.py         -- Cartesian product (582 posts)\n"
         "  blog/templates.py         -- 3 rotating HTML templates\n"
         "  blog/shopify_blog.py      -- Shopify REST API client\n"
         "  generate_blog_posts.py    -- Publishing script\n\n"
@@ -420,8 +443,8 @@ def generate_technical_breakdown():
         "  - Rich HTML with landmark images\n"
         "  - 10 targeted tags\n"
         "  - Social media follow links (Instagram, TikTok, Pinterest)\n\n"
-        "Publishing: 2 posts/run, Mon/Wed/Fri = 6/week\n"
-        "Total: 300 drafts -> ~50 weeks to publish all"
+        "Publishing: 6 posts/run, Mon/Wed/Fri = 18/week\n"
+        "Total: 582 drafts -> ~32 weeks to publish all"
     )
 
     pdf.section("Google Shopping Feed", 2)
@@ -442,15 +465,15 @@ def generate_technical_breakdown():
 
     w3 = [45, 25, 25, 30, 65]
     pdf.table_row(["Type", "Duration", "Count", "Generator", "Description"], w3, bold=True)
-    pdf.table_row(["Promo", "14s", "50", "generate_videos.py", "Ken Burns on landmark art"], w3)
-    pdf.table_row(["Travel Art", "28s", "100", "generate_travel_videos.py", "Narrative + art showcase"], w3)
-    pdf.table_row(["Stock Footage", "28s", "100", "stock_compositor.py", "Real footage + art overlay"], w3)
+    pdf.table_row(["Promo", "14s", "97", "generate_videos.py", "Ken Burns on landmark art"], w3)
+    pdf.table_row(["Travel Art", "28s", "194", "generate_travel_videos.py", "Narrative + art showcase"], w3)
+    pdf.table_row(["Stock Footage", "28s", "194", "stock_compositor.py", "Real footage + art overlay"], w3)
     pdf.ln(2)
 
     pdf.body(
-        "Upload queue: 250 videos in randomized order (upload_queue.json)\n"
-        "Schedule: 3 videos per run, Tuesday + Friday at 5:00 AM\n"
-        "Platforms: Instagram Reels + TikTok simultaneously"
+        "Upload queue: 485 videos in randomized order (upload_queue.json)\n"
+        "Schedule: Daily 3 AM, 9 videos per run to TikTok + Instagram + 9 YouTube Shorts\n"
+        "Platforms: Instagram Reels + TikTok + YouTube Shorts simultaneously"
     )
 
     # Automation
@@ -463,10 +486,10 @@ def generate_technical_breakdown():
 
     w4 = [45, 30, 55, 60]
     pdf.table_row(["Schedule", "Time", "Script", "Action"], w4, bold=True)
-    pdf.table_row(["Daily", "2:00 AM", "run_landmark_daily.sh", "Pinterest + Printify uploads"], w4)
-    pdf.table_row(["Daily (paused)", "3:00 AM", "run_teepublic_daily.sh", "TeePublic landmark tshirts"], w4)
-    pdf.table_row(["Mon/Wed/Fri", "4:00 AM", "run_blog_publish.sh", "Publish 2 blog posts"], w4)
-    pdf.table_row(["Tue/Fri", "5:00 AM", "run_video_uploads.sh", "Upload 3 videos"], w4)
+    pdf.table_row(["Daily", "Midnight", "run_landmark_daily.sh", "Pinterest + Printify uploads"], w4)
+    pdf.table_row(["Daily", "1:00 AM", "run_teepublic_daily.sh", "TeePublic landmark tshirts"], w4)
+    pdf.table_row(["Mon/Wed/Fri", "2:00 AM", "run_blog_publish.sh", "Publish 6 blog posts"], w4)
+    pdf.table_row(["Daily", "3:00 AM", "run_video_uploads.sh", "9 videos TikTok/IG + 9 YT Shorts"], w4)
     pdf.ln(2)
 
     pdf.section("Persistent Services", 2)
@@ -524,11 +547,12 @@ def generate_technical_breakdown():
     pdf.table_row(["pinterest_tokens", "Access + refresh tokens", "Keychain", "Auto-refresh"], w6)
     pdf.table_row(["telegram", "Bot token, user IDs", "Keychain", "Manual"], w6)
     pdf.table_row(["email_monitor", "Azure AD credentials", "Keychain", "Sep 2026"], w6)
+    pdf.table_row(["instagram", "Long-lived token, app_id, ig_user_id", "Keychain", "60-day auto-refresh"], w6)
     pdf.table_row(["pexels", "API key", "Keychain", "None"], w6)
     pdf.ln(2)
 
     pdf.section("Security Measures", 2)
-    pdf.bullet("macOS Keychain encryption for all credentials (7 configs)")
+    pdf.bullet("macOS Keychain encryption for all credentials (8 configs)")
     pdf.bullet("Subprocess list-based arguments (no shell injection)")
     pdf.bullet("HTTP client log suppression (prevents token leaks)")
     pdf.bullet("User ID whitelist on Telegram bot")
@@ -587,17 +611,17 @@ def generate_operations_guide():
 
     w = [45, 30, 35, 40, 40]
     pdf.table_row(["Platform", "Products", "Status", "Upload Method", "Schedule"], w, bold=True)
-    pdf.table_row(["Printify", "601", "Active", "REST API", "Daily 2 AM"], w)
-    pdf.table_row(["Shopify Store", "601", "Active", "Via Printify", "N/A"], w)
-    pdf.table_row(["TeePublic", "67", "Active", "Playwright", "Daily 3 AM*"], w)
-    pdf.table_row(["Pinterest", "32 pins", "Sandbox", "API v5", "Daily 2 AM"], w)
-    pdf.table_row(["Instagram", "45 videos", "Active", "Playwright", "Tue/Fri 5 AM"], w)
-    pdf.table_row(["TikTok", "27 videos", "Active", "Playwright", "Tue/Fri 5 AM"], w)
-    pdf.table_row(["Redbubble", "158", "Legacy", "Playwright", "None"], w)
-    pdf.table_row(["Society6", "5", "Blocked", "Playwright", "None"], w)
-    pdf.table_row(["Blog", "~300 posts", "Active", "Shopify API", "M/W/F 4 AM"], w)
+    pdf.table_row(["Printify", "1,164", "Active", "REST API", "Daily midnight"], w)
+    pdf.table_row(["Shopify Store", "1,164", "Active", "Via Printify", "N/A"], w)
+    pdf.table_row(["TeePublic", "385", "Active", "Playwright", "Daily 1 AM"], w)
+    pdf.table_row(["Pinterest", "12 pins", "Sandbox", "API v5", "Daily midnight"], w)
+    pdf.table_row(["Instagram", "79 videos", "Active", "Graph API", "Daily 3 AM"], w)
+    pdf.table_row(["TikTok", "69 videos", "Active", "Playwright", "Daily 3 AM"], w)
+    pdf.table_row(["YouTube", "5 videos", "Active", "OAuth API", "Daily 3 AM"], w)
+    pdf.table_row(["Redbubble", "48", "Paused", "Playwright", "None"], w)
+    pdf.table_row(["Society6", "0", "Blocked", "-", "None"], w)
+    pdf.table_row(["Blog", "~582 posts", "Active", "Shopify API", "M/W/F 2 AM"], w)
     pdf.ln(2)
-    pdf.body("* TeePublic daily schedule paused as of March 9, 2026")
 
     # Inventory
     pdf.section("Design Inventory")
@@ -608,16 +632,17 @@ def generate_operations_guide():
     pdf.table_row(["POD Templates (14 themes)", "709", "702", "705"], w2)
     pdf.table_row(["Landmark Phase 1 (25)", "150", "150", "0"], w2)
     pdf.table_row(["Landmark Phase 2 (25)", "150", "150", "0"], w2)
-    pdf.table_row(["TOTAL", "1,009", "1,002", "705"], w2)
+    pdf.table_row(["Landmark Phase 3 (48)", "282", "282", "0"], w2)
+    pdf.table_row(["TOTAL", "1,291", "1,284", "705"], w2)
     pdf.ln(2)
 
     pdf.section("Video Assets", 2)
-    w3 = [60, 30, 30, 35, 35]
-    pdf.table_row(["Type", "Phase 1", "Phase 2", "Duration", "Format"], w3, bold=True)
-    pdf.table_row(["Promo", "25", "25", "14 sec", "1080x1920"], w3)
-    pdf.table_row(["Travel Art", "50", "50", "28 sec", "1080x1920"], w3)
-    pdf.table_row(["Stock Footage", "50", "50", "28 sec", "1080x1920"], w3)
-    pdf.table_row(["TOTAL", "125", "125", "", "250 videos"], w3)
+    w3 = [50, 25, 25, 25, 25, 40]
+    pdf.table_row(["Type", "Ph 1", "Ph 2", "Ph 3", "Total", "Format"], w3, bold=True)
+    pdf.table_row(["Promo (14s)", "25", "25", "47", "97", "1080x1920"], w3)
+    pdf.table_row(["Travel Art (28s)", "50", "50", "94", "194", "1080x1920"], w3)
+    pdf.table_row(["Stock (28s)", "50", "50", "94", "194", "1080x1920"], w3)
+    pdf.table_row(["TOTAL", "125", "125", "235", "485", ""], w3)
     pdf.ln(4)
 
     # Active Services
@@ -627,10 +652,10 @@ def generate_operations_guide():
     pdf.body(
         "All tasks run via macOS launchd. Plist files are in ~/Library/LaunchAgents/."
     )
-    pdf.bullet("com.moderndesignconcept.pod-upload-landmark-pinterest -- Daily 2:00 AM")
-    pdf.bullet("com.moderndesignconcept.pod-upload-teepublic -- Daily 3:00 AM (PAUSED)")
-    pdf.bullet("com.moderndesignconcept.blog-publish -- Mon/Wed/Fri 4:00 AM")
-    pdf.bullet("com.moderndesignconcept.pod-upload-video-social -- Tue/Fri 5:00 AM")
+    pdf.bullet("com.moderndesignconcept.pod-upload-landmark-pinterest -- Daily Midnight")
+    pdf.bullet("com.moderndesignconcept.pod-upload-teepublic -- Daily 1:00 AM")
+    pdf.bullet("com.moderndesignconcept.blog-publish -- Mon/Wed/Fri 2:00 AM")
+    pdf.bullet("com.moderndesignconcept.pod-upload-video-social -- Daily 3:00 AM")
     pdf.ln(2)
 
     pdf.section("Persistent Daemons", 2)
@@ -649,6 +674,8 @@ def generate_operations_guide():
     pdf.table_row(["Pinterest", "moderndesignconcept", "Sandbox access only"], w4)
     pdf.table_row(["Instagram", "@mdcmoderndesignconcept", "Business account"], w4)
     pdf.table_row(["TikTok", "@moderndesignconcept", "Creator account"], w4)
+    pdf.table_row(["YouTube", "@moderndesignconcept", "Shorts channel"], w4)
+    pdf.table_row(["Facebook", "Modern Design Concept", "App ID: 1317939003529091"], w4)
     pdf.table_row(["GitHub", "RebelHawk-TK", "Gallery + generator repos"], w4)
     pdf.table_row(["Google Merchant", "ID: 5733510036", "Free listings enabled"], w4)
     pdf.table_row(["Azure AD", "MDC Email Monitor app", "Expires Sep 2026"], w4)
@@ -659,40 +686,36 @@ def generate_operations_guide():
     pdf.section("Roadmap & Pending Tasks")
 
     pdf.section("Immediate (This Week)", 2)
-    pdf.bullet("Upload 705 sticker designs to Printify")
-    pdf.bullet("Resume TeePublic daily schedule")
-    pdf.bullet("Complete Printify Phase 2 poster/tshirt uploads")
+    pdf.bullet("Create Phase 3 Shopify collections (needs write_products scope)")
+    pdf.bullet("Exchange YouTube OAuth for new client credentials")
     pdf.ln(2)
 
     pdf.section("Short-Term (1-4 Weeks)", 2)
-    pdf.bullet("Set up gallery.moderndesignconcept.com custom domain")
-    pdf.bullet("Create Best Sellers + New Arrivals Shopify collections")
-    pdf.bullet("Submit gallery sitemap to Google Search Console")
-    pdf.bullet("Connect TikTok Shop to Printify for marketplace syndication")
+    pdf.bullet("Add Etsy marketplace integration")
     pdf.bullet("Re-apply for Pinterest Standard Access (remove sandbox limit)")
+    pdf.bullet("Connect TikTok Shop to Printify for marketplace syndication")
+    pdf.bullet("Create Best Sellers + New Arrivals Shopify collections")
     pdf.ln(2)
 
     pdf.section("Medium-Term (1-3 Months)", 2)
     pdf.bullet("Expand design catalog with new landmark phases or themes")
-    pdf.bullet("Add Etsy marketplace integration")
     pdf.bullet("Implement OAuth token rotation automation")
-    pdf.bullet("Set up Google Analytics + conversion tracking")
     pdf.bullet("Investigate Society6 platform block resolution")
+    pdf.bullet("Set up gallery.moderndesignconcept.com custom domain")
     pdf.ln(2)
 
     pdf.section("Long-Term", 2)
     pdf.bullet("Scale to 5,000+ products across 10+ platforms")
     pdf.bullet("Add AI-generated custom designs (customer requests)")
-    pdf.bullet("YouTube channel for longer-form travel art content")
     pdf.bullet("Affiliate marketing partnerships with travel bloggers")
     pdf.bullet("International expansion (multi-language listings)")
     pdf.ln(4)
 
     # Key Metrics
     pdf.section("Key Metrics to Track")
-    pdf.bullet("Products listed per platform (target: 1,000+ on Printify)")
-    pdf.bullet("Blog posts published (target: 300 total, 6/week)")
-    pdf.bullet("Video uploads (target: 250 total across IG + TikTok)")
+    pdf.bullet("Products listed per platform (target: 2,000+ on Printify)")
+    pdf.bullet("Blog posts published (target: 582 total, 18/week)")
+    pdf.bullet("Video uploads (target: 485 total across IG + TikTok + YouTube)")
     pdf.bullet("Organic search impressions (Google Search Console)")
     pdf.bullet("Shopify store sessions and conversion rate")
     pdf.bullet("Revenue per platform per month")
