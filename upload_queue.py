@@ -172,7 +172,7 @@ def upload_video(video_entry: dict, platform: str) -> bool:
         ]
     elif platform == "instagram":
         cmd = [
-            sys.executable, str(PROJECT_DIR / "upload_instagram.py"),
+            sys.executable, str(PROJECT_DIR / "upload_instagram_api.py"),
             "--source-dir", source_dir,
             "--limit", "1",
         ]
