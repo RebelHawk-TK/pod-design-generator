@@ -60,112 +60,10 @@ CATEGORY_EDUCATION = "27"
 UPLOAD_DELAY = 15  # seconds between uploads
 MAX_RETRIES = 3
 
-# Reuse landmark data from TikTok uploader
-try:
-    from upload_tiktok import LANDMARKS, _extract_landmark_id
-except ImportError:
-    LANDMARKS = {}
-    def _extract_landmark_id(stem: str) -> tuple[str, bool]:
-        for suffix in ("_travel_a", "_travel_b", "_stock_a", "_stock_b"):
-            if stem.endswith(suffix):
-                return stem[:-len(suffix)], "travel" in suffix
-        return stem, False
-
-# Phase 2+3 landmarks not in upload_tiktok.py
-EXTRA_LANDMARKS = {
-    "acropolis_athens": {"name": "Acropolis of Athens", "location": "Athens", "tags": ["acropolis", "athens", "greece"]},
-    "amalfi_coast": {"name": "Amalfi Coast", "location": "Italy", "tags": ["amalficoast", "italy", "travel"]},
-    "amsterdam_canals": {"name": "Amsterdam Canals", "location": "Amsterdam", "tags": ["amsterdam", "canals", "netherlands"]},
-    "antelope_canyon": {"name": "Antelope Canyon", "location": "Arizona", "tags": ["antelopecanyon", "arizona", "nature"]},
-    "bagan_temples": {"name": "Bagan Temples", "location": "Myanmar", "tags": ["bagan", "myanmar", "temples"]},
-    "blue_mosque": {"name": "Blue Mosque", "location": "Istanbul", "tags": ["bluemosque", "istanbul", "turkey"]},
-    "bora_bora": {"name": "Bora Bora", "location": "French Polynesia", "tags": ["borabora", "paradise", "travel"]},
-    "borobudur": {"name": "Borobudur Temple", "location": "Java", "tags": ["borobudur", "indonesia", "temple"]},
-    "bruges_medieval": {"name": "Bruges", "location": "Belgium", "tags": ["bruges", "belgium", "medieval"]},
-    "burj_khalifa": {"name": "Burj Khalifa", "location": "Dubai", "tags": ["burjkhalifa", "dubai", "skyscraper"]},
-    "cappadocia": {"name": "Cappadocia", "location": "Turkey", "tags": ["cappadocia", "turkey", "balloons"]},
-    "charles_bridge": {"name": "Charles Bridge", "location": "Prague", "tags": ["charlesbridge", "prague", "czechia"]},
-    "duomo_florence": {"name": "Florence Cathedral", "location": "Florence", "tags": ["duomo", "florence", "italy"]},
-    "easter_island": {"name": "Easter Island", "location": "Chile", "tags": ["easterisland", "moai", "chile"]},
-    "edinburgh_old_town": {"name": "Edinburgh Old Town", "location": "Scotland", "tags": ["edinburgh", "scotland", "oldtown"]},
-    "fushimi_inari": {"name": "Fushimi Inari Shrine", "location": "Kyoto", "tags": ["fushimiinari", "kyoto", "japan"]},
-    "golden_temple_amritsar": {"name": "Golden Temple", "location": "Amritsar", "tags": ["goldentemple", "amritsar", "india"]},
-    "gyeongbokgung": {"name": "Gyeongbokgung Palace", "location": "Seoul", "tags": ["gyeongbokgung", "seoul", "korea"]},
-    "hoi_an": {"name": "Hoi An Ancient Town", "location": "Vietnam", "tags": ["hoian", "vietnam", "lanterns"]},
-    "iguazu_falls": {"name": "Iguazu Falls", "location": "Argentina/Brazil", "tags": ["iguazufalls", "waterfall", "nature"]},
-    "matterhorn": {"name": "Matterhorn", "location": "Switzerland", "tags": ["matterhorn", "switzerland", "alps"]},
-    "meteora": {"name": "Meteora", "location": "Greece", "tags": ["meteora", "greece", "monasteries"]},
-    "mont_saint_michel": {"name": "Mont Saint-Michel", "location": "France", "tags": ["montsaintmichel", "france", "island"]},
-    "monument_valley": {"name": "Monument Valley", "location": "Arizona/Utah", "tags": ["monumentvalley", "arizona", "desert"]},
-    "niagara_falls": {"name": "Niagara Falls", "location": "US/Canada", "tags": ["niagarafalls", "waterfall", "nature"]},
-    "northern_lights_iceland": {"name": "Northern Lights", "location": "Iceland", "tags": ["northernlights", "iceland", "aurora"]},
-    "nyhavn": {"name": "Nyhavn", "location": "Copenhagen", "tags": ["nyhavn", "copenhagen", "denmark"]},
-    "petronas_towers": {"name": "Petronas Towers", "location": "Kuala Lumpur", "tags": ["petronastowers", "malaysia", "skyline"]},
-    "plitvice_lakes": {"name": "Plitvice Lakes", "location": "Croatia", "tags": ["plitvicelakes", "croatia", "nature"]},
-    "rothenburg": {"name": "Rothenburg ob der Tauber", "location": "Germany", "tags": ["rothenburg", "germany", "medieval"]},
-    "seville_alcazar": {"name": "Royal Alcazar of Seville", "location": "Seville", "tags": ["alcazar", "seville", "spain"]},
-    "sugarloaf_rio": {"name": "Sugarloaf Mountain", "location": "Rio de Janeiro", "tags": ["sugarloaf", "rio", "brazil"]},
-    "sydney_opera": {"name": "Sydney Opera House", "location": "Sydney", "tags": ["sydneyopera", "australia", "sydney"]},
-    "table_mountain": {"name": "Table Mountain", "location": "Cape Town", "tags": ["tablemountain", "capetown", "southafrica"]},
-    "tikal": {"name": "Tikal", "location": "Guatemala", "tags": ["tikal", "guatemala", "maya"]},
-    "tower_of_london": {"name": "Tower of London", "location": "London", "tags": ["toweroflondon", "london", "castle"]},
-    "trolltunga": {"name": "Trolltunga", "location": "Norway", "tags": ["trolltunga", "norway", "cliff"]},
-    "uluru": {"name": "Uluru", "location": "Australia", "tags": ["uluru", "australia", "outback"]},
-    "victoria_falls": {"name": "Victoria Falls", "location": "Zambia/Zimbabwe", "tags": ["victoriafalls", "waterfall", "africa"]},
-    "wadi_rum": {"name": "Wadi Rum", "location": "Jordan", "tags": ["wadirum", "jordan", "desert"]},
-    "yellowstone": {"name": "Yellowstone", "location": "Wyoming", "tags": ["yellowstone", "nationalpark", "nature"]},
-    "zhangjiajie": {"name": "Zhangjiajie", "location": "China", "tags": ["zhangjiajie", "china", "avatar"]},
-}
-
-
-# ---------------------------------------------------------------------------
-# Caption builder
-# ---------------------------------------------------------------------------
-
-COMMON_TAGS = ["fineart", "artprint", "homedecor", "wallart", "moderndesignconcept", "shorts"]
-TRAVEL_TAGS = ["travelfacts", "history", "didyouknow", "worldwonders", "moderndesignconcept", "shorts"]
-
-
-def build_youtube_metadata(landmark_id: str, *, is_travel: bool = False) -> dict:
-    """Build YouTube title, description, and tags for a video."""
-    info = LANDMARKS.get(landmark_id) or EXTRA_LANDMARKS.get(landmark_id, {})
-    name = info.get("name", landmark_id.replace("_", " ").title())
-    location = info.get("location", "")
-    specific_tags = info.get("tags", [])
-
-    if is_travel:
-        title = f"Incredible facts about {name}"
-        if location:
-            title += f" | {location}"
-        description = (
-            f"Incredible facts about the {name}"
-            f"{f' in {location}' if location else ''}.\n\n"
-            f"More art and travel content at moderndesignconcept.com\n\n"
-            f"#Shorts #travel #history #landmarks #didyouknow"
-        )
-        tags = specific_tags + TRAVEL_TAGS
-        category = CATEGORY_TRAVEL
-    else:
-        title = f"{name} reimagined as fine art"
-        if location:
-            title += f" | {location}"
-        description = (
-            f"{name} reimagined through classic art styles using neural style transfer.\n\n"
-            f"Shop prints, posters & tees: https://moderndesignconcept.com\n\n"
-            f"#Shorts #fineart #artprint #wallart #homedecor"
-        )
-        tags = specific_tags + COMMON_TAGS
-        category = CATEGORY_ENTERTAINMENT
-
-    # YouTube title max 100 chars
-    title = title[:100]
-
-    return {
-        "title": title,
-        "description": description,
-        "tags": tags[:15],
-        "category": category,
-    }
+from video_captions import (
+    extract_video_info,
+    build_youtube_metadata,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -311,15 +209,15 @@ def record(tracker: dict, key: str, status: str, video_id: str = "", error: str 
 # Video discovery
 # ---------------------------------------------------------------------------
 
-def discover_videos(source_dirs: list[Path]) -> list[tuple[Path, str, bool]]:
+def discover_videos(source_dirs: list[Path]) -> list[tuple[Path, str, str]]:
     """Find all MP4 videos across source directories."""
     videos = []
     for d in source_dirs:
         if not d.is_dir():
             continue
         for mp4 in sorted(d.glob("*.mp4")):
-            landmark_id, is_travel = _extract_landmark_id(mp4.stem)
-            videos.append((mp4, landmark_id, is_travel))
+            landmark_id, video_type = extract_video_info(mp4.stem)
+            videos.append((mp4, landmark_id, video_type))
     return videos
 
 
@@ -332,9 +230,9 @@ def run_upload(args: argparse.Namespace) -> None:
     youtube = get_youtube_service()
 
     source_dirs = [
-        PROJECT_DIR / "output" / "videos",
-        PROJECT_DIR / "output" / "videos_travel",
-        PROJECT_DIR / "output" / "videos_stock",
+        PROJECT_DIR / "output" / "videos_music",
+        PROJECT_DIR / "output" / "videos_travel_music",
+        PROJECT_DIR / "output" / "videos_stock_music",
     ]
     if args.source_dir:
         source_dirs = [Path(args.source_dir)]
@@ -344,17 +242,17 @@ def run_upload(args: argparse.Namespace) -> None:
 
     tracker = load_tracker()
     to_upload = []
-    for video_path, landmark_id, is_travel in all_videos:
+    for video_path, landmark_id, video_type in all_videos:
         key = f"youtube/{video_path.stem}"
         entry = tracker.get(key, {})
         status = entry.get("status")
 
         if args.retry_failed and status == "failed":
-            to_upload.append((video_path, landmark_id, is_travel, key))
+            to_upload.append((video_path, landmark_id, video_type, key))
         elif status == "success":
             continue
         elif not args.retry_failed:
-            to_upload.append((video_path, landmark_id, is_travel, key))
+            to_upload.append((video_path, landmark_id, video_type, key))
 
     if not to_upload:
         print("Nothing to upload.")
@@ -366,8 +264,8 @@ def run_upload(args: argparse.Namespace) -> None:
     print(f"Will {'preview' if args.dry_run else 'upload'} {len(to_upload)} videos\n")
 
     if args.dry_run:
-        for i, (vp, lid, it, key) in enumerate(to_upload, 1):
-            meta = build_youtube_metadata(lid, is_travel=it)
+        for i, (vp, lid, vt, key) in enumerate(to_upload, 1):
+            meta = build_youtube_metadata(lid, video_type=vt)
             print(f"  [{i}] {key}")
             print(f"       Title: {meta['title']}")
             print(f"       Tags: {', '.join(meta['tags'][:8])}...")
@@ -377,10 +275,9 @@ def run_upload(args: argparse.Namespace) -> None:
     uploaded = 0
     failed = 0
 
-    for i, (video_path, landmark_id, is_travel, key) in enumerate(to_upload, 1):
-        metadata = build_youtube_metadata(landmark_id, is_travel=is_travel)
-        vtype = "travel" if is_travel else "promo"
-        print(f"[{i}/{len(to_upload)}] {video_path.name} ({vtype})")
+    for i, (video_path, landmark_id, video_type, key) in enumerate(to_upload, 1):
+        metadata = build_youtube_metadata(landmark_id, video_type=video_type)
+        print(f"[{i}/{len(to_upload)}] {video_path.name} ({video_type})")
         print(f"  Title: {metadata['title']}")
 
         try:
