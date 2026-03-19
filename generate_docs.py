@@ -159,10 +159,10 @@ def generate_mission_statement():
     pdf.table_row(["Platform", "Products", "Price Range", "Margin", "Status"], w, bold=True)
     pdf.table_row(["Printify (via Shopify)", "1,164", "$4.99-$24.99", "~40%", "Active"], w)
     pdf.table_row(["TeePublic", "385", "$14-$25", "~15%", "Active"], w)
-    pdf.table_row(["Pinterest (referral)", "12 pins", "N/A", "Traffic", "Active"], w)
-    pdf.table_row(["Instagram Reels", "79 videos", "N/A", "Brand", "Active"], w)
-    pdf.table_row(["TikTok", "69 videos", "N/A", "Brand", "Active"], w)
-    pdf.table_row(["YouTube Shorts", "5 videos", "N/A", "Brand", "Active"], w)
+    pdf.table_row(["Pinterest (referral)", "12 pins", "N/A", "Traffic", "Auth expired"], w)
+    pdf.table_row(["Instagram Reels", "52+ videos", "N/A", "Brand", "Active"], w)
+    pdf.table_row(["TikTok", "78+ videos", "N/A", "Brand", "Active"], w)
+    pdf.table_row(["YouTube Shorts", "5 videos", "N/A", "Brand", "OAuth disabled"], w)
     pdf.table_row(["Redbubble", "48", "$15-$30", "~20%", "Paused"], w)
     pdf.ln(4)
 
@@ -413,6 +413,7 @@ def generate_technical_breakdown():
         "Flow: Login -> Create Video -> Upload file -> Add caption -> Share\n"
         "Rate: 120-second delay between uploads\n"
         "Queue: upload_queue.json (485 videos, randomized order)\n"
+        "Separate session: .chrome_profile_tiktok/\n"
         "Script: upload_tiktok.py"
     )
 
@@ -468,6 +469,26 @@ def generate_technical_breakdown():
     pdf.table_row(["Promo", "14s", "97", "generate_videos.py", "Ken Burns on landmark art"], w3)
     pdf.table_row(["Travel Art", "28s", "194", "generate_travel_videos.py", "Narrative + art showcase"], w3)
     pdf.table_row(["Stock Footage", "28s", "194", "stock_compositor.py", "Real footage + art overlay"], w3)
+    pdf.ln(2)
+
+    pdf.section("Regional Music Overlay", 2)
+    pdf.body(
+        "All 485 videos have royalty-free traditional music overlaid via add_music.py.\n"
+        "20 cultural regions mapped (Japanese, Indian, French, Italian, Greek, etc.).\n"
+        "Music sourced from Pixabay (copyright-free, no attribution required).\n"
+        "FFmpeg mixes music at 30% volume with 2s fade in/out under original audio.\n\n"
+        "Output directories: videos_music/, videos_travel_music/, videos_stock_music/\n"
+        "Music files stored in: music/regional/ (20 MP3 tracks)"
+    )
+    pdf.ln(2)
+
+    pdf.section("Centralized Captions", 2)
+    pdf.body(
+        "video_captions.py is the single source of truth for all 97 landmark metadata.\n"
+        "Provides per-platform caption builders: build_tiktok_caption(), "
+        "build_instagram_caption(), build_youtube_metadata().\n"
+        "All upload scripts import from this module (no duplicate LANDMARKS dicts)."
+    )
     pdf.ln(2)
 
     pdf.body(
@@ -576,7 +597,10 @@ def generate_technical_breakdown():
         "    canvas.py              Image rendering\n"
         "    fonts.py               Font management\n"
         "    metadata.py            SEO tagging\n"
+        "  video_captions.py        Centralized landmark metadata (97)\n"
+        "  add_music.py             Regional music overlay (20 regions)\n"
         "  upload_*.py              Platform-specific uploaders (8)\n"
+        "  upload_queue.py          Video upload queue orchestrator\n"
         "  batch_upload.py          Multi-platform orchestrator\n"
         "  blog/                    Blog generation & publishing\n"
         "  video_gen/               Promo video generator\n"
@@ -613,14 +637,14 @@ def generate_operations_guide():
     pdf.table_row(["Platform", "Products", "Status", "Upload Method", "Schedule"], w, bold=True)
     pdf.table_row(["Printify", "1,164", "Active", "REST API", "Daily midnight"], w)
     pdf.table_row(["Shopify Store", "1,164", "Active", "Via Printify", "N/A"], w)
-    pdf.table_row(["TeePublic", "385", "Active", "Playwright", "Daily 1 AM"], w)
-    pdf.table_row(["Pinterest", "12 pins", "Sandbox", "API v5", "Daily midnight"], w)
-    pdf.table_row(["Instagram", "79 videos", "Active", "Graph API", "Daily 3 AM"], w)
-    pdf.table_row(["TikTok", "69 videos", "Active", "Playwright", "Daily 3 AM"], w)
-    pdf.table_row(["YouTube", "5 videos", "Active", "OAuth API", "Daily 3 AM"], w)
+    pdf.table_row(["TeePublic", "385", "Issues", "Playwright", "Daily 1 AM"], w)
+    pdf.table_row(["Pinterest", "12 pins", "Auth expired", "API v5", "Daily midnight"], w)
+    pdf.table_row(["Instagram", "52+ videos", "Active", "Graph API", "Daily 3 AM"], w)
+    pdf.table_row(["TikTok", "78+ videos", "Active", "Playwright", "Daily 3 AM"], w)
+    pdf.table_row(["YouTube", "5 videos", "OAuth disabled", "OAuth API", "Daily 3 AM"], w)
     pdf.table_row(["Redbubble", "48", "Paused", "Playwright", "None"], w)
     pdf.table_row(["Society6", "0", "Blocked", "-", "None"], w)
-    pdf.table_row(["Blog", "~582 posts", "Active", "Shopify API", "M/W/F 2 AM"], w)
+    pdf.table_row(["Blog", "~544 drafts", "Active", "Shopify API", "M/W/F 2 AM"], w)
     pdf.ln(2)
 
     # Inventory
@@ -686,8 +710,10 @@ def generate_operations_guide():
     pdf.section("Roadmap & Pending Tasks")
 
     pdf.section("Immediate (This Week)", 2)
+    pdf.bullet("Re-enable YouTube OAuth client (project hale-courage-490111-b6)")
+    pdf.bullet("Refresh Pinterest API token (401 auth expired)")
+    pdf.bullet("Fix TeePublic Playwright publish button timeout")
     pdf.bullet("Create Phase 3 Shopify collections (needs write_products scope)")
-    pdf.bullet("Exchange YouTube OAuth for new client credentials")
     pdf.ln(2)
 
     pdf.section("Short-Term (1-4 Weeks)", 2)
