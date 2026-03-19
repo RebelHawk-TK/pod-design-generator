@@ -36,6 +36,10 @@ from upload_common import (
     jittered_delay,
     CONSECUTIVE_FAILURE_LIMIT,
 )
+from video_captions import (
+    extract_video_info,
+    build_instagram_caption as build_caption,
+)
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -43,104 +47,15 @@ from upload_common import (
 
 PROJECT_DIR = Path(__file__).parent
 TRACKER_FILE = PROJECT_DIR / "uploaded_instagram.json"
-VIDEO_DIR = PROJECT_DIR / "output" / "videos"
+VIDEO_DIR = PROJECT_DIR / "output" / "videos_music"
 
 GRAPH_API_VERSION = "v22.0"
 GRAPH_API_BASE = f"https://graph.instagram.com/{GRAPH_API_VERSION}"
 
-# Polling config for media container status
 POLL_INTERVAL = 10  # seconds
 POLL_TIMEOUT = 300  # 5 minutes max wait for processing
 
-# Delay between uploads (Instagram rate limits)
-INSTAGRAM_DEFAULT_DELAY = 60  # 1 min between uploads (API is faster than browser)
-
-# Landmark metadata for captions
-LANDMARKS = {
-    "eiffel_tower": {"name": "Eiffel Tower", "location": "Paris, France", "tags": ["eiffeltower", "paris", "parisart"]},
-    "taj_mahal": {"name": "Taj Mahal", "location": "Agra, India", "tags": ["tajmahal", "india", "incredibleindia"]},
-    "colosseum": {"name": "Colosseum", "location": "Rome, Italy", "tags": ["colosseum", "rome", "italyart"]},
-    "great_wall": {"name": "Great Wall", "location": "China", "tags": ["greatwallofchina", "china", "wonderoftheworld"]},
-    "notre_dame": {"name": "Notre-Dame", "location": "Paris, France", "tags": ["notredame", "paris", "gothicart"]},
-    "neuschwanstein": {"name": "Neuschwanstein", "location": "Bavaria, Germany", "tags": ["neuschwanstein", "bavaria", "fairytalecastle"]},
-    "mount_fuji": {"name": "Mount Fuji", "location": "Japan", "tags": ["mountfuji", "japan", "fujisan"]},
-    "golden_gate": {"name": "Golden Gate Bridge", "location": "San Francisco", "tags": ["goldengatebridge", "sanfrancisco", "california"]},
-    "sydney_opera": {"name": "Sydney Opera House", "location": "Sydney, Australia", "tags": ["sydneyoperahouse", "sydney", "australia"]},
-    "santorini": {"name": "Santorini", "location": "Greece", "tags": ["santorini", "greece", "greekislands"]},
-    "angkor_wat": {"name": "Angkor Wat", "location": "Cambodia", "tags": ["angkorwat", "cambodia", "ancienttemple"]},
-    "machu_picchu": {"name": "Machu Picchu", "location": "Peru", "tags": ["machupicchu", "peru", "incatrail"]},
-    "sagrada_familia": {"name": "Sagrada Familia", "location": "Barcelona, Spain", "tags": ["sagradafamilia", "barcelona", "gaudi"]},
-    "parthenon": {"name": "Parthenon", "location": "Athens, Greece", "tags": ["parthenon", "athens", "greekhistory"]},
-    "stonehenge": {"name": "Stonehenge", "location": "England", "tags": ["stonehenge", "england", "ancientmonument"]},
-    "moai": {"name": "Moai Statues", "location": "Easter Island", "tags": ["moai", "easterisland", "rapanui"]},
-    "pyramids_giza": {"name": "Pyramids of Giza", "location": "Egypt", "tags": ["pyramidsofgiza", "egypt", "ancientegypt"]},
-    "petra": {"name": "Petra", "location": "Jordan", "tags": ["petra", "jordan", "rosecity"]},
-    "st_basils": {"name": "St. Basil's Cathedral", "location": "Moscow", "tags": ["stbasils", "moscow", "russianart"]},
-    "chichen_itza": {"name": "Chichén Itzá", "location": "Mexico", "tags": ["chichenitza", "mexico", "mayanruins"]},
-    "christ_redeemer": {"name": "Christ the Redeemer", "location": "Rio de Janeiro", "tags": ["christtheredeemer", "riodejaneiro", "brazil"]},
-    "hagia_sophia": {"name": "Hagia Sophia", "location": "Istanbul, Turkey", "tags": ["hagiasophia", "istanbul", "turkeytravel"]},
-    "tower_of_pisa": {"name": "Tower of Pisa", "location": "Pisa, Italy", "tags": ["towerofpisa", "pisa", "leaningtower"]},
-    "big_ben": {"name": "Big Ben", "location": "London, England", "tags": ["bigben", "london", "unitedkingdom"]},
-    "statue_of_liberty": {"name": "Statue of Liberty", "location": "New York", "tags": ["statueofliberty", "newyork", "nyc"]},
-    # Phase 2+3 landmarks
-    "acropolis_athens": {"name": "Acropolis of Athens", "location": "Athens, Greece", "tags": ["acropolis", "athens", "ancientgreece"]},
-    "alhambra": {"name": "Alhambra", "location": "Granada, Spain", "tags": ["alhambra", "granada", "moorisharchitecture"]},
-    "amsterdam_canals": {"name": "Amsterdam Canals", "location": "Amsterdam, Netherlands", "tags": ["amsterdam", "canals", "netherlands"]},
-    "antelope_canyon": {"name": "Antelope Canyon", "location": "Arizona, USA", "tags": ["antelopecanyon", "arizona", "slotcanyon"]},
-    "banff_national_park": {"name": "Banff National Park", "location": "Alberta, Canada", "tags": ["banff", "canada", "rockymountains"]},
-    "blue_mosque": {"name": "Blue Mosque", "location": "Istanbul, Turkey", "tags": ["bluemosque", "istanbul", "ottoman"]},
-    "bora_bora": {"name": "Bora Bora", "location": "French Polynesia", "tags": ["borabora", "frenchpolynesia", "paradise"]},
-    "borobudur": {"name": "Borobudur", "location": "Java, Indonesia", "tags": ["borobudur", "indonesia", "buddhisttemple"]},
-    "brooklyn_bridge": {"name": "Brooklyn Bridge", "location": "New York, USA", "tags": ["brooklynbridge", "nyc", "newyork"]},
-    "buckingham_palace": {"name": "Buckingham Palace", "location": "London, England", "tags": ["buckinghampalace", "london", "royalpalace"]},
-    "burj_khalifa": {"name": "Burj Khalifa", "location": "Dubai, UAE", "tags": ["burjkhalifa", "dubai", "tallestbuilding"]},
-    "cappadocia": {"name": "Cappadocia", "location": "Turkey", "tags": ["cappadocia", "turkey", "hotairballoon"]},
-    "cinque_terre": {"name": "Cinque Terre", "location": "Italy", "tags": ["cinqueterre", "italy", "italianriviera"]},
-    "dubai_frame": {"name": "Dubai Frame", "location": "Dubai, UAE", "tags": ["dubaiframe", "dubai", "modernarchitecture"]},
-    "forbidden_city": {"name": "Forbidden City", "location": "Beijing, China", "tags": ["forbiddencity", "beijing", "imperialpalace"]},
-    "grand_canyon": {"name": "Grand Canyon", "location": "Arizona, USA", "tags": ["grandcanyon", "arizona", "naturalwonder"]},
-    "great_barrier_reef": {"name": "Great Barrier Reef", "location": "Australia", "tags": ["greatbarrierreef", "australia", "coralreef"]},
-    "hallstatt": {"name": "Hallstatt", "location": "Austria", "tags": ["hallstatt", "austria", "alpinevillage"]},
-    "iguazu_falls": {"name": "Iguazu Falls", "location": "Argentina/Brazil", "tags": ["iguazufalls", "waterfall", "southamerica"]},
-    "kilimanjaro": {"name": "Mount Kilimanjaro", "location": "Tanzania", "tags": ["kilimanjaro", "tanzania", "africa"]},
-    "kyoto_bamboo": {"name": "Kyoto Bamboo Grove", "location": "Kyoto, Japan", "tags": ["kyoto", "bamboogrove", "japan"]},
-    "lake_bled": {"name": "Lake Bled", "location": "Slovenia", "tags": ["lakebled", "slovenia", "fairytale"]},
-    "lofoten": {"name": "Lofoten Islands", "location": "Norway", "tags": ["lofoten", "norway", "arcticbeauty"]},
-    "louvre": {"name": "Louvre Museum", "location": "Paris, France", "tags": ["louvre", "paris", "artmuseum"]},
-    "maldives": {"name": "Maldives", "location": "Maldives", "tags": ["maldives", "tropicalisland", "overwater"]},
-    "meteora": {"name": "Meteora", "location": "Greece", "tags": ["meteora", "greece", "monasteries"]},
-    "mont_saint_michel": {"name": "Mont Saint-Michel", "location": "Normandy, France", "tags": ["montsaintmichel", "france", "medieval"]},
-    "niagara_falls": {"name": "Niagara Falls", "location": "USA/Canada", "tags": ["niagarafalls", "waterfall", "naturalwonder"]},
-    "palace_versailles": {"name": "Palace of Versailles", "location": "France", "tags": ["versailles", "france", "palace"]},
-    "plitvice_lakes": {"name": "Plitvice Lakes", "location": "Croatia", "tags": ["plitvicelakes", "croatia", "waterfalls"]},
-    "prague_castle": {"name": "Prague Castle", "location": "Prague, Czech Republic", "tags": ["praguecastle", "prague", "medieval"]},
-    "rio_carnival": {"name": "Rio Carnival", "location": "Rio de Janeiro, Brazil", "tags": ["riocarnival", "brazil", "samba"]},
-    "santorini_blue_domes": {"name": "Santorini Blue Domes", "location": "Santorini, Greece", "tags": ["santorini", "bluedomes", "greece"]},
-    "serengeti": {"name": "Serengeti", "location": "Tanzania", "tags": ["serengeti", "safari", "wildlife"]},
-    "suez_canal": {"name": "Suez Canal", "location": "Egypt", "tags": ["suezcanal", "egypt", "waterway"]},
-    "table_mountain": {"name": "Table Mountain", "location": "Cape Town, South Africa", "tags": ["tablemountain", "capetown", "southafrica"]},
-    "temple_heaven": {"name": "Temple of Heaven", "location": "Beijing, China", "tags": ["templeofheaven", "beijing", "china"]},
-    "toledo": {"name": "Toledo", "location": "Spain", "tags": ["toledo", "spain", "medievalcity"]},
-    "torres_del_paine": {"name": "Torres del Paine", "location": "Patagonia, Chile", "tags": ["torresdelpaine", "patagonia", "chile"]},
-    "venice": {"name": "Venice", "location": "Italy", "tags": ["venice", "italy", "gondola"]},
-    "victoria_falls": {"name": "Victoria Falls", "location": "Zambia/Zimbabwe", "tags": ["victoriafalls", "africa", "waterfall"]},
-    "wat_arun": {"name": "Wat Arun", "location": "Bangkok, Thailand", "tags": ["watarun", "bangkok", "thailand"]},
-    "yellowstone": {"name": "Yellowstone", "location": "Wyoming, USA", "tags": ["yellowstone", "nationalpark", "geysers"]},
-    "zhangjiajie": {"name": "Zhangjiajie", "location": "Hunan, China", "tags": ["zhangjiajie", "china", "avatarmountains"]},
-}
-
-COMMON_TAGS = [
-    "fineart", "artprint", "wallart", "homedecor", "artlovers",
-    "moderndesignconcept", "reelsart", "artreels", "travelart",
-]
-TRAVEL_TAGS = [
-    "travelfacts", "history", "didyouknow", "travelhistory", "worldwonders",
-    "traveltiktok", "learnontiktok", "moderndesignconcept", "reelsart", "travelart",
-]
-STOCK_TAGS = [
-    "travelcinematic", "wanderlust", "explore", "beautifuldestinations",
-    "travelgram", "moderndesignconcept", "reelsart", "travelart",
-]
+INSTAGRAM_DEFAULT_DELAY = 60  # 1 min between uploads
 
 
 # ---------------------------------------------------------------------------
@@ -167,61 +82,6 @@ def _api_request(url: str, method: str = "GET", data: dict | None = None) -> dic
 
 
 # ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-def _extract_video_info(filename_stem: str) -> tuple[str, str]:
-    """Extract landmark ID and video type from filename.
-
-    Returns:
-        (landmark_id, video_type) where video_type is 'promo', 'travel', or 'stock'.
-    """
-    for suffix in ("_travel_a", "_travel_b"):
-        if filename_stem.endswith(suffix):
-            return filename_stem[: -len(suffix)], "travel"
-    for suffix in ("_stock_a", "_stock_b"):
-        if filename_stem.endswith(suffix):
-            return filename_stem[: -len(suffix)], "stock"
-    return filename_stem, "promo"
-
-
-# ---------------------------------------------------------------------------
-# Caption builder
-# ---------------------------------------------------------------------------
-
-def build_caption(landmark_id: str, *, video_type: str = "promo") -> str:
-    """Build an Instagram caption with hashtags for a landmark video."""
-    info = LANDMARKS.get(landmark_id, {})
-    name = info.get("name", landmark_id.replace("_", " ").title())
-    location = info.get("location", "")
-    specific_tags = info.get("tags", [])
-
-    if video_type == "travel":
-        caption = f"Incredible facts about the {name}"
-        if location:
-            caption += f"\n📍 {location}"
-        caption += "\n\nMore art inspired by world landmarks → moderndesignconcept.com (link in bio)"
-        all_tags = specific_tags + TRAVEL_TAGS
-    elif video_type == "stock":
-        caption = f"The beauty of {name}"
-        if location:
-            caption += f"\n📍 {location}"
-        caption += "\n\nShop art prints inspired by world landmarks → moderndesignconcept.com (link in bio)"
-        all_tags = specific_tags + STOCK_TAGS
-    else:
-        caption = f"{name} reimagined as fine art 🎨"
-        if location:
-            caption += f"\n📍 {location}"
-        caption += "\n\nShop the full collection → moderndesignconcept.com (link in bio)"
-        all_tags = specific_tags + COMMON_TAGS
-
-    hashtags = " ".join(f"#{t}" for t in all_tags[:20])
-    caption += f"\n\n{hashtags}"
-
-    return caption[:2200]  # Instagram caption limit
-
-
-# ---------------------------------------------------------------------------
 # Video discovery
 # ---------------------------------------------------------------------------
 
@@ -236,7 +96,7 @@ def discover_videos(source_dir: Path) -> list[tuple[Path, str, str]]:
 
     videos = []
     for mp4 in sorted(source_dir.glob("*.mp4")):
-        landmark_id, video_type = _extract_video_info(mp4.stem)
+        landmark_id, video_type = extract_video_info(mp4.stem)
         videos.append((mp4, landmark_id, video_type))
 
     return videos

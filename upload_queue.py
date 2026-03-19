@@ -28,9 +28,9 @@ QUEUE_FILE = PROJECT_DIR / "upload_queue.json"
 
 # Video directories to scan
 VIDEO_DIRS = {
-    "promo": PROJECT_DIR / "output" / "videos",
-    "travel": PROJECT_DIR / "output" / "videos_travel",
-    "stock": PROJECT_DIR / "output" / "videos_stock",
+    "promo": PROJECT_DIR / "output" / "videos_music",
+    "travel": PROJECT_DIR / "output" / "videos_travel_music",
+    "stock": PROJECT_DIR / "output" / "videos_stock_music",
 }
 
 # Reproducible shuffle seed

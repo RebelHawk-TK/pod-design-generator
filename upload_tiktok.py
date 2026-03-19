@@ -32,6 +32,11 @@ from upload_common import (
     wait_for_cloudflare,
     CONSECUTIVE_FAILURE_LIMIT,
 )
+from video_captions import (
+    LANDMARKS,
+    extract_video_info,
+    build_tiktok_caption as build_caption,
+)
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -39,93 +44,18 @@ from upload_common import (
 
 PROJECT_DIR = Path(__file__).parent
 TRACKER_FILE = PROJECT_DIR / "uploaded_tiktok.json"
-VIDEO_DIR = PROJECT_DIR / "output" / "videos"
+VIDEO_DIR = PROJECT_DIR / "output" / "videos_music"
 
-CHROME_PROFILE_DIR = PROJECT_DIR / ".chrome_profile"
+CHROME_PROFILE_DIR = PROJECT_DIR / ".chrome_profile_tiktok"
 
 TIKTOK_UPLOAD_URL = "https://www.tiktok.com/tiktokstudio/upload"
 TIKTOK_DEFAULT_DELAY = 120  # 2 min between uploads
 
-# Landmark metadata for captions
-LANDMARKS = {
-    "eiffel_tower": {"name": "Eiffel Tower", "location": "Paris", "tags": ["paris", "eiffeltower", "france"]},
-    "taj_mahal": {"name": "Taj Mahal", "location": "India", "tags": ["tajmahal", "india", "agra"]},
-    "colosseum": {"name": "Colosseum", "location": "Rome", "tags": ["colosseum", "rome", "italy"]},
-    "great_wall": {"name": "Great Wall", "location": "China", "tags": ["greatwall", "china", "wonder"]},
-    "notre_dame": {"name": "Notre-Dame", "location": "Paris", "tags": ["notredame", "paris", "gothic"]},
-    "neuschwanstein": {"name": "Neuschwanstein", "location": "Bavaria", "tags": ["neuschwanstein", "castle", "germany"]},
-    "mount_fuji": {"name": "Mount Fuji", "location": "Japan", "tags": ["mountfuji", "japan", "fujisan"]},
-    "golden_gate": {"name": "Golden Gate Bridge", "location": "San Francisco", "tags": ["goldengate", "sanfrancisco", "california"]},
-    "sydney_opera": {"name": "Sydney Opera House", "location": "Sydney", "tags": ["sydneyopera", "australia", "sydney"]},
-    "santorini": {"name": "Santorini", "location": "Greece", "tags": ["santorini", "greece", "travel"]},
-    "angkor_wat": {"name": "Angkor Wat", "location": "Cambodia", "tags": ["angkorwat", "cambodia", "temple"]},
-    "machu_picchu": {"name": "Machu Picchu", "location": "Peru", "tags": ["machupicchu", "peru", "inca"]},
-    "sagrada_familia": {"name": "Sagrada Familia", "location": "Barcelona", "tags": ["sagradafamilia", "barcelona", "gaudi"]},
-    "parthenon": {"name": "Parthenon", "location": "Athens", "tags": ["parthenon", "athens", "greece"]},
-    "stonehenge": {"name": "Stonehenge", "location": "England", "tags": ["stonehenge", "england", "ancient"]},
-    "moai": {"name": "Moai Statues", "location": "Easter Island", "tags": ["moai", "easterisland", "mystery"]},
-    "pyramids_giza": {"name": "Pyramids of Giza", "location": "Egypt", "tags": ["pyramids", "egypt", "giza"]},
-    "petra": {"name": "Petra", "location": "Jordan", "tags": ["petra", "jordan", "rosecity"]},
-    "st_basils": {"name": "St. Basil's Cathedral", "location": "Moscow", "tags": ["stbasils", "moscow", "russia"]},
-    "chichen_itza": {"name": "Chichén Itzá", "location": "Mexico", "tags": ["chichenitza", "mexico", "maya"]},
-    "christ_redeemer": {"name": "Christ the Redeemer", "location": "Rio", "tags": ["christredeemer", "rio", "brazil"]},
-    "hagia_sophia": {"name": "Hagia Sophia", "location": "Istanbul", "tags": ["hagiasophia", "istanbul", "turkey"]},
-    "tower_of_pisa": {"name": "Tower of Pisa", "location": "Italy", "tags": ["towerofpisa", "pisa", "italy"]},
-    "big_ben": {"name": "Big Ben", "location": "London", "tags": ["bigben", "london", "england"]},
-    "statue_of_liberty": {"name": "Statue of Liberty", "location": "New York", "tags": ["statueofliberty", "newyork", "nyc"]},
-}
-
-# Common hashtags for all videos
-COMMON_TAGS = ["fineart", "artprint", "homedecor", "wallart", "moderndesignconcept", "shopsmall"]
-TRAVEL_TAGS = ["travelfacts", "history", "didyouknow", "travelhistory", "worldwonders", "moderndesignconcept"]
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
 
 def _extract_landmark_id(filename_stem: str) -> tuple[str, bool]:
-    """Extract landmark ID from filename, detecting travel videos.
-
-    Returns:
-        (landmark_id, is_travel) tuple.
-        e.g. "eiffel_tower_travel_a" -> ("eiffel_tower", True)
-             "eiffel_tower"          -> ("eiffel_tower", False)
-    """
-    for suffix in ("_travel_a", "_travel_b"):
-        if filename_stem.endswith(suffix):
-            return filename_stem[: -len(suffix)], True
-    return filename_stem, False
-
-
-# ---------------------------------------------------------------------------
-# Caption builder
-# ---------------------------------------------------------------------------
-
-def build_caption(landmark_id: str, *, is_travel: bool = False) -> str:
-    """Build a TikTok caption with hashtags for a landmark video."""
-    info = LANDMARKS.get(landmark_id, {})
-    name = info.get("name", landmark_id.replace("_", " ").title())
-    location = info.get("location", "")
-    specific_tags = info.get("tags", [])
-
-    if is_travel:
-        caption = f"Incredible facts about the {name}"
-        if location:
-            caption += f" | {location}"
-        caption += "\nMore at moderndesignconcept.com"
-        all_tags = specific_tags + TRAVEL_TAGS
-    else:
-        caption = f"{name} reimagined as fine art 🎨"
-        if location:
-            caption += f" | {location}"
-        caption += "\nShop: moderndesignconcept.com"
-        all_tags = specific_tags + COMMON_TAGS
-
-    hashtags = " ".join(f"#{t}" for t in all_tags[:15])
-    caption += f"\n{hashtags}"
-
-    return caption[:2200]  # TikTok caption limit
+    """Extract landmark ID and travel flag from filename."""
+    landmark_id, video_type = extract_video_info(filename_stem)
+    return landmark_id, video_type == "travel"
 
 
 # ---------------------------------------------------------------------------
@@ -469,7 +399,7 @@ def run_tiktok_upload(args: argparse.Namespace) -> None:
     # Dry run
     if args.dry_run:
         for i, (video_path, landmark_id, key, is_travel) in enumerate(to_upload, 1):
-            caption = build_caption(landmark_id, is_travel=is_travel)
+            caption = build_caption(landmark_id, video_type="travel" if is_travel else "promo")
             vtype = "travel" if is_travel else "promo"
             print(f"  [{i}] {key} ({vtype})")
             print(f"       File: {video_path.name}")
@@ -506,7 +436,7 @@ def run_tiktok_upload(args: argparse.Namespace) -> None:
         uploaded_count = 0
 
         for i, (video_path, landmark_id, key, is_travel) in enumerate(to_upload, 1):
-            caption = build_caption(landmark_id, is_travel=is_travel)
+            caption = build_caption(landmark_id, video_type="travel" if is_travel else "promo")
             vtype = "travel" if is_travel else "promo"
             print(f"[{i}/{len(to_upload)}] Uploading: {video_path.name} ({vtype})")
             print(f"  Landmark: {landmark_id}")

@@ -28,6 +28,9 @@ app_icon.png
 .pexels_config.json
 dashboard_cache/
 .chrome_profile/
+.chrome_profile_tiktok/
+*.bak
+music/regional/
 .instagram_session/
 .tiktok_session/
 debug_*.png
